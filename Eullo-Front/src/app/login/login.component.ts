@@ -13,7 +13,7 @@ export class LoginComponent implements OnInit {
     password: ['', [Validators.required]]
   });
 
-  isLoading: boolean;
+  isLoading: boolean = false;
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
