@@ -14,11 +14,14 @@ import { RegisterComponent } from './register/register.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ChatListComponent } from './chat-list/chat-list.component';
-import { ChatItemComponent } from './chat-list/chat-item/chat-item.component';
+import { ChatListComponent } from './chat/chat-list/chat-list.component';
+import { ChatItemComponent } from './chat/chat-list/chat-item/chat-item.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatDividerModule} from '@angular/material/divider';
 import {MatMenuModule} from '@angular/material/menu';
+import { ConversationComponent } from './chat/conversation/conversation.component';
+import { ChatComponent } from './chat/chat.component';
+import {MessageComponent} from "./chat/conversation/message/message.component";
 @NgModule({
   declarations: [
     AppComponent,
@@ -26,7 +29,10 @@ import {MatMenuModule} from '@angular/material/menu';
     RegisterComponent,
     NavbarComponent,
     ChatListComponent,
-    ChatItemComponent
+    ChatItemComponent,
+    ConversationComponent,
+    ChatComponent,
+    MessageComponent,
   ],
   imports: [
     BrowserModule,
