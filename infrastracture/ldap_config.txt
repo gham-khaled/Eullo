@@ -1,0 +1,9 @@
+sudo vi /etc/phpldapadmin/config.php
+/'server','host'
+setValue('server','host','ec2-34-247-197-157.eu-west-1.compute.amazonaws.com');
+/'server','base'
+setValue('server','base',array('dc=ec2-34-247-197-157,dc=eu-west-1,dc=compute,dc=amazonaws,dc=com'));
+/'login','bind
+setValue('login','bind_id','cn=admin,dc=ec2-34-247-197-157,dc=eu-west-1,dc=compute,dc=amazonaws,dc=com');
+/'hide_template
+

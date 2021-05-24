@@ -46,8 +46,8 @@ resource "aws_key_pair" "ssh-key" {
   public_key = file("./keys/eullo.pub")
 }
 resource "aws_eip" "eip_assoc" {
-  instance =  module.ec2_ldap.id
-  vpc      = true
+  instance = module.ec2_ldap.id
+  vpc = true
 }
 //resource "aws_eip_association" "eip_assoc" {
 //  instance_id   = module.ec2_ldap.id
@@ -69,14 +69,11 @@ resource "aws_eip" "eip_assoc" {
 //    module.node_master_sg.this_security_group_id]
 //}
 module "ec2_ldap" {
-  depends_on = [
-    module.ldap_sg]
   name = "ldap"
   key = aws_key_pair.ssh-key.id
   source = "./modules/ec2"
   private_ip = "10.0.0.39"
   subnet_id = module.vpc.public_subnets[0]
-  associate_public_ip_address = true
   vpc_security_group_ids = [
     module.ldap_sg.this_security_group_id]
 }
@@ -145,6 +142,7 @@ module "node_worker_sg" {
     "ssh-tcp",
     "all-icmp",
   ]
+
   ingress_with_cidr_blocks = [
     {
       from_port = 10250
@@ -168,6 +166,7 @@ module "node_worker_sg" {
       cidr_blocks = "10.10.0.0/16"
     }
   ]
+
   egress_with_cidr_blocks = [
     {
       rule = "all-all"
@@ -184,11 +183,10 @@ module "ldap_sg" {
   ingress_cidr_blocks = [
     "0.0.0.0/0"]
   ingress_rules = [
+    "ssh-tcp",
     "https-443-tcp",
     "http-80-tcp",
-    "ssh-tcp",
-    "all-icmp"]
-
+    "ldap-tcp"]
   egress_with_cidr_blocks = [
     {
       rule = "all-all"

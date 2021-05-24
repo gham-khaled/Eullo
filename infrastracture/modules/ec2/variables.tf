@@ -5,7 +5,7 @@ variable "vpc_security_group_ids" {
   default = []
 }
 variable "associate_public_ip_address" {
-  default = false
+  default = true
 }
 variable "subnet_id" {}
 variable "name" {}
