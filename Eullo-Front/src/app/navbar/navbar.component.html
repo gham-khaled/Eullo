@@ -1,9 +1,10 @@
 <mat-toolbar color="primary">
   <mat-toolbar-row>
     <span>Eullo.</span>
-    <span class="example-spacer">Welcome UserX</span>
-    <button mat-button class="example-icon">
-      Logout  <span class="material-icons">logout</span>
-    </button>
+    <span class="example-spacer"></span>
+    <button mat-button [matMenuTriggerFor]="menu"><span class="material-icons">person_outline</span>Sinda</button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item><span class="material-icons">logout</span>Logout</button>
+    </mat-menu>
   </mat-toolbar-row>
 </mat-toolbar>

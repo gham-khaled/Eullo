@@ -1,6 +1,12 @@
 .example-spacer {
-  flex: 1 0 auto;
-  text-align: center;
-  font-weight: lighter;
+  flex: 1 1 auto;
 }
 
+.example-headers-align{
+  flex-basis: 0;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 8px;
+  background: #00307c;
+  color: #edf2f4;
+}

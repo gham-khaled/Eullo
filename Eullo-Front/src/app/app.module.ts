@@ -18,7 +18,7 @@ import { ChatListComponent } from './chat-list/chat-list.component';
 import { ChatItemComponent } from './chat-list/chat-item/chat-item.component';
 import {MatCardModule} from '@angular/material/card';
 import {MatDividerModule} from '@angular/material/divider';
-
+import {MatMenuModule} from '@angular/material/menu';
 @NgModule({
   declarations: [
     AppComponent,
@@ -40,7 +40,8 @@ import {MatDividerModule} from '@angular/material/divider';
     MatToolbarModule,
     MatCardModule,
     FontAwesomeModule,
-    MatDividerModule
+    MatDividerModule,
+    MatMenuModule
   ],
   providers: [],
   bootstrap: [AppComponent]
