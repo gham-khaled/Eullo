@@ -21,7 +21,7 @@ module "vpc" {
   cidr = "10.0.0.0/26"
   # 10.0.0.0/8 is reserved for EC2-Classic
   azs = [
-    "${local.region}a"]
+    "${local.region}b"]
   private_subnets = [
     "10.0.0.0/27"
   ]
@@ -39,41 +39,48 @@ module "vpc" {
 resource "aws_eip" "nat" {
   vpc = true
 }
+resource "aws_key_pair" "ssh-key" {
+  key_name = "eullo"
+  public_key = file("./keys/eullo.pub")
+}
 //resource "aws_eip_association" "eip_assoc" {
 //  instance_id   = module.ec2_lb.id
 //  allocation_id = aws_eip.nat.id
 //}
 
-module "ec2_backend" {
-  depends_on = [
-    module.node_master_sg]
-  instance_type = "t2.micro"
-  name="ChatServer"
+//module "ec2_backend" {
+//  depends_on = [
+//    module.node_master_sg]
+//  instance_type = "t2.micro"
+//  key =  aws_key_pair.ssh-key.id
 
-  source = "./modules/ec2"
-  private_ip = "10.0.0.40"
-  subnet_id = module.vpc.public_subnets[0]
-  vpc_security_group_ids = [
-    module.node_master_sg.this_security_group_id]
-}
+//  name="ChatServer"
+//
+//  source = "./modules/ec2"
+//  private_ip = "10.0.0.40"
+//  subnet_id = module.vpc.public_subnets[0]
+//  vpc_security_group_ids = [
+//    module.node_master_sg.this_security_group_id]
+//}
 module "ec2_ldap" {
   depends_on = [
-    module.lb_sg]
-    name="ldap"
-
+    module.ldap_sg]
+  name = "ldap"
+  key = aws_key_pair.ssh-key.id
   source = "./modules/ec2"
   private_ip = "10.0.0.39"
   subnet_id = module.vpc.public_subnets[0]
   associate_public_ip_address = true
   vpc_security_group_ids = [
-    module.lb_sg.this_security_group_id]
+    module.ldap_sg.this_security_group_id]
 }
 
 resource "local_file" "instances-ids" {
   content = jsonencode(
   [
     module.ec2_ldap.instance-arn,
-    module.ec2_backend.instance-arn])
+    //    module.ec2_backend.instance-arn
+  ])
   filename = "instance-ids.txt"
 }
 module "serverSG" {
@@ -162,10 +169,10 @@ module "node_worker_sg" {
     }
   ]
 }
-module "lb_sg" {
+module "ldap_sg" {
   source = "terraform-aws-modules/security-group/aws"
   version = "~> 3.0"
-  name = "lb-sg"
+  name = "ldap-sg"
   description = "Security group for the Load Balancer "
   vpc_id = module.vpc.vpc_id
   ingress_cidr_blocks = [

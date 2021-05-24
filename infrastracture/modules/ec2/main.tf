@@ -25,7 +25,7 @@ resource "aws_instance" "server" {
   instance_type = var.instance_type
   associate_public_ip_address = var.associate_public_ip_address
   hibernation = true
-  key_name = "pfa"
+  key_name = var.key
   subnet_id = var.subnet_id
   vpc_security_group_ids = var.vpc_security_group_ids
   private_ip = var.private_ip
@@ -34,7 +34,7 @@ resource "aws_instance" "server" {
     encrypted = true
     volume_size = 20
   }
-    tags = {
+  tags = {
     Name = var.name
   }
 }

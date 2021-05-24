@@ -1,9 +1,9 @@
-output "lb-id" {
-  value = module.ec2_lb.instance-id
+output "ldap-id" {
+  value = module.ec2_ldap.instance-id
 }
-output "master-id" {
-  value = module.ec2_master.instance-id
-}
+//output "master-id" {
+//  value = module.ec2_master.instance-id
+//}
 //output "node-1-id" {
 //  value = module.ec2_master.instance-id
 //}
