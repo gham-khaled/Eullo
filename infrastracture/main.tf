@@ -33,18 +33,24 @@ module "vpc" {
   create_flow_log_cloudwatch_log_group = true
   create_flow_log_cloudwatch_iam_role = true
   flow_log_max_aggregation_interval = 60
+  enable_dns_hostnames = true
 
   tags = local.tags
 }
 resource "aws_eip" "nat" {
   vpc = true
 }
+
 resource "aws_key_pair" "ssh-key" {
   key_name = "eullo"
   public_key = file("./keys/eullo.pub")
 }
+resource "aws_eip" "eip_assoc" {
+  instance =  module.ec2_ldap.id
+  vpc      = true
+}
 //resource "aws_eip_association" "eip_assoc" {
-//  instance_id   = module.ec2_lb.id
+//  instance_id   = module.ec2_ldap.id
 //  allocation_id = aws_eip.nat.id
 //}
 
