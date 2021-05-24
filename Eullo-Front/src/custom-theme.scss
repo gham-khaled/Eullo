@@ -1,0 +1,46 @@
+
+@import '~@angular/material/theming';
+
+@include mat-core();
+$mat-primary: (
+  main: #00307c,
+  lighter: #b3c1d8,
+  darker: #001e5f,
+  200: #00307c, // For slide toggle,
+  contrast : (
+    main: $light-primary-text,
+    lighter: $dark-primary-text,
+    darker: $light-primary-text,
+  )
+);
+$Eullo-Front-primary: mat-palette($mat-primary, main, lighter, darker);
+$Eullo-Front-accent: mat-palette($mat-grey, A200, A100, A400);
+
+$mat-warn: (
+  main: #d64b00,
+  lighter: #f3c9b3,
+  darker: #c63300,
+  200: #d64b00, // For slide toggle,
+  contrast : (
+    main: $light-primary-text,
+    lighter: $dark-primary-text,
+    darker: $light-primary-text,
+  )
+);
+$Eullo-Front-warn: mat-palette($mat-warn, main, lighter, darker);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$Eullo-Front-theme: mat-light-theme((
+  color: (
+    primary: $Eullo-Front-primary,
+    accent: $Eullo-Front-accent,
+    warn: $Eullo-Front-warn,
+  )
+));
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($Eullo-Front-theme);
+

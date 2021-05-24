@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="app-title">
+    Eullo.
+    <div class="description">Securely connect with your close ones</div>
+  </div>
+  <div class="login-container">
+      <form [formGroup]="loginForm" (ngSubmit)="login()" class="form">
+        <div class="title">Login</div>
+        <div class="input">
+          <mat-form-field appearance="outline" class="mat-form-field">
+            <mat-label>Username</mat-label>
+            <input matInput formControlName="username" required>
+          </mat-form-field>
+        </div>
+        <div>
+          <mat-form-field appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password" required>
+          </mat-form-field>
+        </div>
+        <div >
+          <button mat-flat-button color="primary" class="button" (click)="login()">Login</button>
+        </div>
+        <div class="sign-up">Don't Have an Account? <a routerLink="/register">Register</a></div>
+      </form>
+  </div>
+</div>
+
+
