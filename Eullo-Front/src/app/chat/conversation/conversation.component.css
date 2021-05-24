@@ -1,0 +1,19 @@
+.conversation-container {
+  position: absolute;
+  top: 6.75%;
+  left: 21.75%;
+  width: 78.15%;
+  height: 70vh;
+}
+.user-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+ .send-message .send-message-input {
+   width: 100%;
+ }
+
+ .messages-container {
+   display: flex;
+   flex-direction: column;
+ }

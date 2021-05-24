@@ -1,0 +1,19 @@
+.card{
+  margin-top: 1%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sent{
+  align-self: flex-end;
+  max-width: 50%;
+  background: #f5f5f5;
+  margin-right: 1%;
+}
+
+.received{
+  align-self: flex-start;
+  max-width: 50%;
+  background: #f3c9b3;
+  margin-left: 1%;
+}
