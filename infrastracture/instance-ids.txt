@@ -1,1 +1,1 @@
-["arn:aws:ec2:us-east-1:817952498873:instance/i-01852abffbba9fae7","arn:aws:ec2:us-east-1:817952498873:instance/i-082a25611e77b8a74","arn:aws:ec2:us-east-1:817952498873:instance/i-0373b4bbd2de87935","arn:aws:ec2:us-east-1:817952498873:instance/i-0ec61819e874f8677"]
+["arn:aws:ec2:us-west-1:734456385508:instance/i-0c6be9098ef4e8d87"]
