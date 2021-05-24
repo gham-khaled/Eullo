@@ -1,0 +1,18 @@
+.chat-item {
+  width: 20%;
+  border-radius: 0;
+}
+
+.chat-item:hover {
+  background: #f5f5f5;
+  cursor: pointer;
+}
+.user-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+.material-icons {
+  height: 5px;
+  border: 1px solid  black;
+}

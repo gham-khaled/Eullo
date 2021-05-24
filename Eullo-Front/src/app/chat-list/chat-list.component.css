@@ -1,0 +1,25 @@
+.new-message{
+  width: 20%;
+  border-radius: 0;
+  color:#d64b00;
+}
+
+.new-message:hover {
+  cursor: pointer;
+  background: #f5f5f5;
+
+}
+.material-icons {
+  height: 24px;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  width: 50%;
+}
+
+.card-title {
+  height: 60%;
+  padding-left: 5%;
+}
