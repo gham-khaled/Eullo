@@ -11,5 +11,8 @@ export class ConversationComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  send() {
+    console.log('Send Message')
 
+  }
 }

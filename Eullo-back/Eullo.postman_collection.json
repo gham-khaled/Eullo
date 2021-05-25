@@ -1,0 +1,59 @@
+{
+	"info": {
+		"_postman_id": "ab4d0ca2-7a9c-43f6-9c6a-3d91f99c0abe",
+		"name": "Eullo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add User",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"sinda\",\n    \"userPassword\":\"douda123\",\n    \"name\":\"Sinda Jeddey\",\n    \"number\":\"123\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Eullo}}/auth",
+					"host": [
+						"{{Eullo}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Eullo}}/user",
+					"host": [
+						"{{Eullo}}"
+					],
+					"path": [
+						"user"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "douda",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
