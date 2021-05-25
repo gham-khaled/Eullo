@@ -1,5 +1,18 @@
+.chat-list{
+  width: 25%;
+  position: fixed;
+  z-index: 1;
+  top: 6.5%;
+}
+
+.chat-items{
+  overflow-y: scroll;
+  position: fixed;
+  width: 25%;
+  height: 100%;
+}
+
 .new-message{
-  width: 20%;
   border-radius: 0;
   color:#d64b00;
 }
@@ -23,3 +36,4 @@
   height: 60%;
   padding-left: 5%;
 }
+

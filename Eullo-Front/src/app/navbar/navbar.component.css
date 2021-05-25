@@ -10,3 +10,9 @@
   background: #00307c;
   color: #edf2f4;
 }
+
+.nav-bar{
+  position: fixed;
+  z-index: 2;
+  height: 5%;
+}

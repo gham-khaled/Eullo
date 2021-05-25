@@ -1,19 +1,23 @@
 <div class="conversation-container">
-  <mat-card class="user">
-    <mat-card-header>
-      <div mat-card-avatar class="user-image"></div>
-      <mat-card-title>User Y</mat-card-title>
-    </mat-card-header>
-  </mat-card>
+  <div class="user-container">
+    <mat-card class="user">
+      <mat-card-header>
+        <div mat-card-avatar class="user-image"></div>
+        <mat-card-title>User Y</mat-card-title>
+        <mat-card-subtitle>Connected</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
   <div class="messages-container">
     <app-message></app-message>
     <app-message></app-message>
   </div>
-  <form class="send-message">
-    <mat-form-field class="send-message-input">
-      <mat-label>Type a message...</mat-label>
-      <input type="text" matInput >
-      <mat-icon matSuffix color="primary">send</mat-icon>
-    </mat-form-field>
-  </form>
+  <div  class="send-message">
+    <form>
+      <mat-form-field class="send-message-input">
+        <input type="text" matInput placeholder="Type a message ...">
+        <mat-icon matSuffix color="primary">send</mat-icon>
+      </mat-form-field>
+    </form>
+  </div>
 </div>
