@@ -12,13 +12,9 @@
     </mat-card-header>
   </mat-card>
   <div class="chat-items">
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
-    <app-chat-item></app-chat-item>
+    <app-chat-item *ngFor="let user of users"
+                   [username]="user.username"
+                   [connected]="user.connected"
+                   [lastReceivedMessage]="user.lastReceivedMessage"></app-chat-item>
   </div>
 </div>

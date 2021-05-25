@@ -8,6 +8,7 @@ import {environment} from "../../../environments/environment";
 })
 export class AuthService {
 
+  // @ts-ignore
   private _credentials: string | null;
 
   constructor(private http: HttpClient) {

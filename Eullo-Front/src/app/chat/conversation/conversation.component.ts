@@ -11,6 +11,7 @@ import {MessageComponent} from "./message/message.component";
 export class ConversationComponent implements OnInit {
 
   message: string = "";
+  // @ts-ignore
   messages:[{ message: string, status: string }] = [
     {message:"Sent message1", status: "sent"},
     {message:"Sent message2", status: "sent"},
@@ -20,6 +21,7 @@ export class ConversationComponent implements OnInit {
     {message:"Received message3", status: "received"},
   ]
 
+  // @ts-ignore
   @ViewChild('messagesContainer', { read: ViewContainerRef }) entry: ViewContainerRef;
   constructor(private resolver: ComponentFactoryResolver) {}
 

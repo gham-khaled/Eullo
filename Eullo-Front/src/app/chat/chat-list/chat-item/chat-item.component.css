@@ -11,7 +11,10 @@
   background-size: cover;
 }
 
-.material-icons {
-  height: 5px;
-  border: 1px solid  black;
+.connected {
+  color: green;
+}
+
+.disconnected {
+  color: #424242;
 }
