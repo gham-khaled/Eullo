@@ -10,7 +10,7 @@ import {MessageComponent} from "./message/message.component";
 })
 export class ConversationComponent implements OnInit {
 
-  typedMessage: string = "";
+  message: string = "";
   messages:[{ message: string, status: string }] = [
     {message:"Sent message1", status: "sent"},
     {message:"Sent message2", status: "sent"},
@@ -29,18 +29,24 @@ export class ConversationComponent implements OnInit {
     // })
   }
 
-  send() {
-    if (this.typedMessage) {
-      const componentRef = this.createMessageComponent();
-      componentRef.instance.message = this.typedMessage;
-      // Replace custom message by the message from the form
-      // this.webSocketService.emit('message', "custom message")
-      this.typedMessage = ""
-    }
+  newMessageComponent() {
+      const factory = this.resolver.resolveComponentFactory(MessageComponent);
+      return this.entry.createComponent(factory);
   }
 
-  createMessageComponent() {
-    const factory = this.resolver.resolveComponentFactory(MessageComponent);
-    return this.entry.createComponent(factory);
+  sendMessage(){
+    const componentRef = this.newMessageComponent();
+    componentRef.instance.message = this.message;
+    componentRef.instance.status = "sent";
+    // this.webSocketService.emit('message', this.message)
+    this.message = "";
+  }
+
+  receiveMessage(){
+    const componentRef = this.newMessageComponent();
+    componentRef.instance.message = this.message;
+    componentRef.instance.status = "received";
+    // this.webSocketService.emit('message', this.message)
+    this.message = "";
   }
 }

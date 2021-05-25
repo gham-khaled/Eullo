@@ -15,8 +15,8 @@
   </div>
   <div class="send-message">
       <mat-form-field class="send-message-input">
-        <input type="text" [(ngModel)]="typedMessage"  matInput placeholder="Type a message ...">
-        <button matSuffix mat-button (click)="send()" type='button'>
+        <input type="text" [(ngModel)]="message"  matInput placeholder="Type a message ...">
+        <button matSuffix mat-button (click)="sendMessage()" type='button'>
           <mat-icon  color="primary">send</mat-icon>
         </button>
       </mat-form-field>
