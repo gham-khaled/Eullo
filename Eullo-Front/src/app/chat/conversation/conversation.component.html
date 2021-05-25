@@ -1,3 +1,4 @@
+<!--suppress AngularUndefinedBinding -->
 <div class="conversation-container">
   <div class="user-container">
     <mat-card class="user">
@@ -9,19 +10,15 @@
     </mat-card>
   </div>
   <div class="messages-container">
-    <app-message></app-message>
-    <app-message></app-message>
-    <app-message></app-message>
-    <app-message></app-message>
+    <app-message *ngFor="let message of messages" [message]="message.message" [status]="message.status"></app-message>
+    <ng-container #messagesContainer></ng-container>
   </div>
   <div class="send-message">
-    <form>
       <mat-form-field class="send-message-input">
-        <input type="text" matInput placeholder="Type a message ...">
+        <input type="text" [(ngModel)]="typedMessage"  matInput placeholder="Type a message ...">
         <button matSuffix mat-button (click)="send()" type='button'>
-                    <mat-icon  color="primary">send</mat-icon>
+          <mat-icon  color="primary">send</mat-icon>
         </button>
       </mat-form-field>
-    </form>
   </div>
 </div>

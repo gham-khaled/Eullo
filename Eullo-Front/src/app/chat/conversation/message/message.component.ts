@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Status} from "./status.enum";
 
 @Component({
   selector: 'app-message',
@@ -6,6 +7,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./message.component.css']
 })
 export class MessageComponent implements OnInit {
+
+  @Input()
+  message: string = "";
+
+  @Input()
+  status: string = "sent";
 
   constructor() { }
 

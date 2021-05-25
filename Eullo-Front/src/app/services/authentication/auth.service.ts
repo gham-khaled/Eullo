@@ -33,7 +33,7 @@ export class AuthService {
     const user = {username, password};
     this._credentials = JSON.stringify(user); // to remve later
     localStorage.setItem('user', this._credentials); // to remove later
-    // return this.http.post(`${environment.BASE_URL}`, {username, password}).toPromise();
+    // return this.http.post(`${environment.BASE_URL}`, {username, password}).toPromise(); //uncomment this later
   }
 
   isAuthenticated() : boolean {

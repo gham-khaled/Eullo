@@ -11,12 +11,12 @@ export class WebSocketService {
   socket: any;
 
   constructor() {
-    this.socket = io(environment.BASE_URL, {'multiplex': false});
-    console.log("Before Connection")
-    let connection_infos = "It's me Mario"
-    this.socket.on('connect', () => {
-      this.socket.emit('message', {data: 'I\'m connected!'});
-    });
+    // this.socket = io(environment.BASE_URL, {'multiplex': false});
+    // console.log("Before Connection")
+    // let connection_infos = "It's me Mario"
+    // this.socket.on('connect', () => {
+    //   this.socket.emit('message', {data: 'I\'m connected!'});
+    // });
   }
 
   listen(eventName: string) {
