@@ -1,11 +1,12 @@
 import json
 from flask import Flask, request
 import flask.scaffold
+
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 
 from flask_restful import Api, Resource
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 
 from LdapFunctions import LdapFunctions
 
@@ -39,12 +40,20 @@ class Auth(Resource):
         return ldapFunctions.add_user(user)
 
 
-@socketio.on('custom_send')
-def send_message(msg):
-    message = json.loads(msg)
+@socketio.on('message')
+def send_message(message):
+    # message = json.loads(msg)
     print(message)
-    emit('custom_receive', {'data': message['data'], 'receiver': message['receiver'], 'source': message['source'],
-                            'time': message['time']}, broadcast=True)
+    emit('custom_receive', message, broadcast=True)
+    send(message, broadcast=True)
+
+
+@socketio.on('connect')
+def add_connection():
+    currentSocketId = request.sid
+
+    print(f"New connection {str(currentSocketId)}")
+    print(f"New connection ")
 
 
 connected_users = {"connected_users": []}

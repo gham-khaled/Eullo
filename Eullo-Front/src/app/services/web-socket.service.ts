@@ -12,7 +12,12 @@ export class WebSocketService {
 
   constructor() {
     // @ts-ignore
-    this.socket = io(environment.BASE_URL);
+    this.socket = io(environment.BASE_URL, {'multiplex': false});
+    console.log("Before Connection")
+    let connection_infos = "It's me Mario"
+    this.socket.on('connect', () => {
+      this.socket.emit('message', {data: 'I\'m connected!'});
+    });
   }
 
   listen(eventName: string) {
@@ -25,6 +30,5 @@ export class WebSocketService {
 
   emit(eventName: string, data: any) {
     this.socket.emit(eventName, data);
-
   }
 }
