@@ -4,12 +4,16 @@
     <div class="description">Securely connect with your close ones</div>
   </div>
   <div class="register-container">
-    <form [formGroup]="registerForm" (ngSubmit)="register()" class="form">
+    <mat-spinner *ngIf="isLoading" class="spinner"></mat-spinner>
+    <form *ngIf="!isLoading" [formGroup]="registerForm" (ngSubmit)="register()" class="form">
       <div class="title">Register</div>
       <div class="input">
         <mat-form-field appearance="outline" class="mat-form-field">
           <mat-label>Card Number</mat-label>
           <input matInput formControlName="cardNumber" required>
+          <mat-error *ngIf="error">
+            <strong>{{error}}</strong>
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="input">
@@ -28,6 +32,9 @@
         <mat-form-field appearance="outline" class="mat-form-field">
           <mat-label>Username</mat-label>
           <input matInput formControlName="username" required>
+          <mat-error *ngIf="error">
+            <strong>{{error}}</strong>
+          </mat-error>
         </mat-form-field>
       </div>
       <div>
@@ -37,7 +44,7 @@
         </mat-form-field>
       </div>
       <div >
-        <button mat-flat-button color="primary" class="button" (click)="register()">Register</button>
+        <button mat-flat-button color="primary" class="button" [disabled]="registerForm.invalid || isLoading" (click)="register()">Register</button>
       </div>
       <div class="sign-up">Already Have an Account? <a routerLink="/login">Login</a></div>
     </form>

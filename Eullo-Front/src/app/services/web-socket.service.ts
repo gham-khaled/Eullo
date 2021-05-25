@@ -11,7 +11,6 @@ export class WebSocketService {
   socket: any;
 
   constructor() {
-    // @ts-ignore
     this.socket = io(environment.BASE_URL, {'multiplex': false});
     console.log("Before Connection")
     let connection_infos = "It's me Mario"

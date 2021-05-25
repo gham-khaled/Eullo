@@ -22,6 +22,9 @@ import {MatMenuModule} from '@angular/material/menu';
 import { ConversationComponent } from './chat/conversation/conversation.component';
 import { ChatComponent } from './chat/chat.component';
 import {MessageComponent} from "./chat/conversation/message/message.component";
+import {HttpClientModule} from "@angular/common/http";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +39,7 @@ import {MessageComponent} from "./chat/conversation/message/message.component";
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
@@ -47,6 +51,7 @@ import {MessageComponent} from "./chat/conversation/message/message.component";
     MatCardModule,
     FontAwesomeModule,
     MatDividerModule,
+    MatProgressSpinnerModule,
     MatMenuModule
   ],
   providers: [],
