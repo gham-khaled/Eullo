@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {WebSocketService} from "../../services/web-socket.service";
 
 @Component({
@@ -8,18 +8,14 @@ import {WebSocketService} from "../../services/web-socket.service";
 })
 export class ChatListComponent implements OnInit {
 
-  // @ts-ignore
-  users:[{username: string; lastReceivedMessage:string; connected:boolean}] = [
-    {username: "Sinda", lastReceivedMessage:"Salut!!", connected: false},
-    {username: "Hazem", lastReceivedMessage:"Ouech", connected: true},
-    {username: "Sa", lastReceivedMessage:"Aa saa", connected: true},
-  ]
+  @Input()
+    // @ts-ignore
+  users: [{ username: string; lastReceivedMessage: string; connected: boolean }]
 
-  constructor(private WebSocketService: WebSocketService) {
+  constructor() {
   }
 
   ngOnInit(): void {
-
 
   }
 
