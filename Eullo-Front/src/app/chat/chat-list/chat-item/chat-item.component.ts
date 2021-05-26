@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {UserMessage} from "../../../models/user-message.interface";
 
 @Component({
   selector: 'app-chat-item',
@@ -7,15 +8,12 @@ import {Component, Input, OnInit} from '@angular/core';
 })
 export class ChatItemComponent implements OnInit {
 
-  @Input('username')
-  username: string="";
+  @Input('user')
+  user: UserMessage | undefined;
 
-  @Input('lastReceivedMessage')
-  lastReceivedMessage: string=``;
 
-  @Input('connected')
-  connected: boolean = false;
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit(): void {
   }

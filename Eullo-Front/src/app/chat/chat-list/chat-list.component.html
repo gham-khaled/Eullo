@@ -1,20 +1,16 @@
-
 <div class="chat-list">
   <mat-card class="new-message">
     <mat-card-header>
       <div class="card-header">
         <div class="material-icons">add_circle_outline</div>
         <div class="card-title">
-          <mat-card-title >Send a Message
+          <mat-card-title>Send a Message
           </mat-card-title>
         </div>
       </div>
     </mat-card-header>
   </mat-card>
   <div class="chat-items">
-    <app-chat-item *ngFor="let user of users"
-                   [username]="user.username"
-                   [connected]="user.connected"
-                   [lastReceivedMessage]="user.lastReceivedMessage"></app-chat-item>
+    <app-chat-item *ngFor="let user of users" [user]="user" (click)="showUser(user)"></app-chat-item>
   </div>
 </div>

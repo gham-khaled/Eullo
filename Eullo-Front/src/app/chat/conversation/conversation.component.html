@@ -1,11 +1,14 @@
 <!--suppress AngularUndefinedBinding -->
-<div class="conversation-container">
+<div class="conversation-container" *ngIf="!user">
+  Select a User (Nkhalik sinda trouchekha)
+</div>
+<div class="conversation-container" *ngIf="user">
   <div class="user-container">
     <mat-card class="user">
       <mat-card-header>
         <div mat-card-avatar class="user-image"></div>
-        <mat-card-title>User Y</mat-card-title>
-        <mat-card-subtitle>Connected</mat-card-subtitle>
+        <mat-card-title>{{user.username}}</mat-card-title>
+        <mat-card-subtitle>{{user.connected ? "Connected" : "Not Connected" }}</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
   </div>
@@ -14,11 +17,11 @@
     <ng-container #messagesContainer></ng-container>
   </div>
   <div class="send-message">
-      <mat-form-field class="send-message-input">
-        <input type="text" [(ngModel)]="message"  matInput placeholder="Type a message ...">
-        <button matSuffix mat-button (click)="sendMessage()" type='button'>
-          <mat-icon  color="primary">send</mat-icon>
-        </button>
-      </mat-form-field>
+    <mat-form-field class="send-message-input">
+      <input type="text" [(ngModel)]="message" matInput placeholder="Type a message ...">
+      <button matSuffix mat-button (click)="sendMessage()" type='button'>
+        <mat-icon color="primary">send</mat-icon>
+      </button>
+    </mat-form-field>
   </div>
 </div>

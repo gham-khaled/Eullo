@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {WebSocketService} from "../services/web-socket.service";
+import {UserMessage} from "../models/user-message.interface";
 
 @Component({
   selector: 'app-chat',
@@ -8,17 +9,23 @@ import {WebSocketService} from "../services/web-socket.service";
 })
 export class ChatComponent implements OnInit {
 
-  // @ts-ignore
-  users:[{username: string; lastReceivedMessage:string; connected:boolean}] = [
-    {username: "Sinda", lastReceivedMessage:"Salut!!", connected: false},
-    {username: "Hazem", lastReceivedMessage:"Ouech", connected: true},
-    {username: "Sa", lastReceivedMessage:"Aa saa", connected: true},
-  ]
+  users: UserMessage[] | undefined
+  selectedUser: UserMessage | undefined
+
   constructor() {
   }
 
   ngOnInit(): void {
+    this.users = [
+      {username: "Sinda", lastReceivedMessage: "Salut!!", connected: false},
+      {username: "Hazem", lastReceivedMessage: "Ouech", connected: true},
+      {username: "Sa", lastReceivedMessage: "Aa saa", connected: true},
+    ]
 
+  }
+
+  updateConversation(user: UserMessage) {
+    this.selectedUser = user
   }
 
 }

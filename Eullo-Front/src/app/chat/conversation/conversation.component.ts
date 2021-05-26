@@ -1,7 +1,8 @@
-import {Component, ComponentFactoryResolver, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {WebSocketService} from "../../services/web-socket.service";
 import {Status} from "./message/status.enum";
 import {MessageComponent} from "./message/message.component";
+import {UserMessage} from "../../models/user-message.interface";
 
 @Component({
   selector: 'app-conversation',
@@ -20,7 +21,8 @@ export class ConversationComponent implements OnInit {
     {message: "Received message2", status: "received"},
     {message: "Received message3", status: "received"},
   ]
-
+  @Input()
+  user: UserMessage | undefined
   @ViewChild('messagesContainer', {read: ViewContainerRef}) entry: ViewContainerRef | undefined;
 
   constructor(private resolver: ComponentFactoryResolver, private webSocketService: WebSocketService) {
