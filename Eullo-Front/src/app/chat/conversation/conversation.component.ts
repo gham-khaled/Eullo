@@ -27,9 +27,9 @@ export class ConversationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.webSocketService.listen('message').subscribe((data) => {
-    //   console.log(data)
-    // })
+    this.webSocketService.listen('message').subscribe((data) => {
+      console.log(data)
+    })
   }
 
   newMessageComponent() {
@@ -39,7 +39,7 @@ export class ConversationComponent implements OnInit {
   }
 
   sendMessage() {
-    // this.webSocketService.emit('message', this.message)
+    this.webSocketService.emit('message', this.message)
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = this.message;
     componentRef.instance.status = "sent";

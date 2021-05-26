@@ -8,20 +8,20 @@ import {environment} from "../../../environments/environment";
 })
 export class AuthService {
 
-  private _credentials: string | null | undefined;
+  private _credentials: User | null | undefined;
 
   constructor(private http: HttpClient) {
     const savedCredentials = localStorage.getItem('user');
     if (savedCredentials) {
-      this._credentials = savedCredentials;
+      this._credentials = JSON.parse(savedCredentials);
     }
   }
 
-  get credentials(): string | null | undefined {
+  get credentials(): User | null | undefined {
     return this._credentials;
   }
 
-  set credentials(value: string | null | undefined) {
+  set credentials(value: User | null | undefined) {
     this._credentials = value;
   }
 

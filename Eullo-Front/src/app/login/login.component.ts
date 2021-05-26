@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {AuthService} from "../services/authentication/auth.service";
 import {Router} from "@angular/router";
+import {User} from "../services/authentication/models/user.interface";
 
 @Component({
   selector: 'app-login',
@@ -16,8 +17,10 @@ export class LoginComponent implements OnInit {
   });
 
   isLoading: boolean = false;
-  error: string ="";
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
+  error: string = "";
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  }
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated())
@@ -29,11 +32,11 @@ export class LoginComponent implements OnInit {
     console.log(`Login: ${this.loginForm.get('username')?.value} ${this.loginForm.get('password')?.value}`);
     this.isLoading = true;
     this.loginForm.disable();
-    console.log(this.loginForm.get('username')?.value,this.loginForm.get('password')?.value)
-    await this.authService.login(this.loginForm.get('username')?.value,this.loginForm.get('password')?.value)
-      .then(data  => {
+    console.log(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value)
+    await this.authService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value)
+      .then(data => {
         localStorage.setItem('user', JSON.stringify(data));
-        this.authService.credentials = localStorage.getItem('user');
+        this.authService.credentials = <User> data;
         this.router.navigate(['/']).then(() => {
           console.log('Login successful: Redirecting...');
           // console.clear();

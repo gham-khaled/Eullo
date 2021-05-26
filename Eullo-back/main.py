@@ -22,16 +22,15 @@ class User(Resource):
     def get(self, username):
         return ldapFunctions.get_user(username)
 
-    def put(self, username):
-        return ldapFunctions.modify_user(username)
-
-    def delete(self, username):
-        return ldapFunctions.delete_user(username)
-
     def post(self):
         user = request.get_json()
         return ldapFunctions.add_user(user)
     ######### LDAP
+
+
+class Users(Resource):
+    def get(self):
+        return ldapFunctions.get_users()
 
 
 class Auth(Resource):
@@ -55,13 +54,19 @@ def send_message(message):
 
 @socketio.on('connect')
 def add_connection():
-    currentSocketId = request.sid
+    current_socket_id = request.sid
+    username = request.args.get('username')
+    connected_users[username] = current_socket_id
 
-    print(f"New connection {str(currentSocketId)}")
-    print(f"New connection ")
+
+@socketio.on('disconnect')
+def remove_connection():
+    # current_socket_id = request.sid
+    username = request.args.get('username')
+    del connected_users[username]
 
 
-connected_users = {"connected_users": []}
+connected_users = {}
 
 
 @socketio.on('custom_connect')
@@ -82,6 +87,7 @@ def broadcast_disconnect(msg):
 
 
 api.add_resource(User, '/user/<username>')
+api.add_resource(Users, '/users')
 api.add_resource(Auth, '/auth')
 
 if __name__ == '__main__':

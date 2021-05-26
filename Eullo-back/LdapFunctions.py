@@ -17,8 +17,6 @@ class LdapFunctions:
         self.ldap_password = 'douda123'
         # self.attributes =  ['displayName', 'uid', 'givenName', 'userPKCS12', 'sn', 'userSMIMECertificate']
         self.attributes = ['uid', 'givenName', 'sn']
-        # self.ldap_server = Server(self.server_ip, get_info=ALL)
-        # self.conn = Connection(self.server_ip, self.ldap_username, self.ldap_password, auto_bind=True)
 
         self.ldap_server = Server(host=self.host, port=389, use_ssl=False, get_info='ALL')
 
@@ -36,23 +34,18 @@ class LdapFunctions:
         self.conn.unbind()
 
     def get_users(self):
-        try:
-            self.connect()
-            self.conn.search('ou=Students,dc=insat,dc=chat,dc=com', '(&(objectclass=inetOrgPerson)(!(uid=0001)))',
-                             attributes=['*'])
-            users = []
-            for entry in self.conn.entries:
-                user = json.loads(entry.entry_to_json())
-                if ('userSMIMECertificate' in user['attributes']):
-                    L = ast.literal_eval(user['attributes']['userSMIMECertificate'][0])
-                    user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
-                users.append(user)
+        self.connect()
+        self.conn.search(self.dn, '(&(objectclass=inetOrgPerson)(!(uid=0001)))', attributes=['*'])
+        users = []
+        for entry in self.conn.entries:
+            user = json.loads(entry.entry_to_json())
+            # if ('userSMIMECertificate' in user['attributes']):
+            #     L = ast.literal_eval(user['attributes']['userSMIMECertificate'][0])
+            #     user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
+            users.append(user)
 
-            self.disconnect()
-            return users
-        except ldap3.LDAPError:
-            self.conn.unbind()
-            return 'authentication error'
+        self.disconnect()
+        return [self.__convert_user(user) for user in users]
 
     def get_user(self, username=None):
         if username == None:
@@ -63,7 +56,7 @@ class LdapFunctions:
         self.conn.search(self.dn, f'(&(objectclass=inetOrgPerson)(sn={username})(!(uid=0001)))',
                          attributes=self.attributes)
         if not self.conn.entries:
-            return "User doesn't exist"
+            return {'message': "Invalid Credentials"}, 400
         else:
             user = json.loads(self.conn.entries[0].entry_to_json())
             # if ('userSMIMECertificate' in user['attributes']):
@@ -71,7 +64,7 @@ class LdapFunctions:
             #     # user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
 
             self.disconnect()
-            return user
+            return self.__convert_user(user)
 
     def login(self, username, password):
         self.connect()
@@ -90,27 +83,26 @@ class LdapFunctions:
             #     user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
 
         self.disconnect()
-        return user
+        return self.__convert_user(user)
 
     def add_user(self, user):
         self.connect()
         print(user)
         # before adding i need to select by username to make sure it's unique
-        self.conn.search(f'ou=Students,{self.dc}', f"(&(objectclass=inetOrgPerson)(sn={user['username']}))",
-                         attributes=['sn'])
+        self.conn.search(self.dn, f"(&(objectclass=inetOrgPerson)(sn={user['username']}))", attributes=['sn'])
         if self.conn.entries:
             self.disconnect()
-            return "User already exists"
+            return {'message': "User already exists"}, 400
         else:
-            m = hashlib.sha256(str(user['userPassword']).encode('utf-8'))
+            m = hashlib.sha256(str(user['password']).encode('utf-8'))
             hashed_pass = m.hexdigest()
             result = self.conn.add(
                 f"cn={user['username']},ou=Students,{self.dc}",
                 attributes={
                     "objectClass": "inetOrgPerson",
                     "sn": user['username'],
-                    "givenName": user['name'],
-                    "uid": user['number'],
+                    "givenName": f"{user['name']} {user['lastName']}",
+                    "uid": user['cardNumber'],
 
                     # "displayName": user['displayName'],
                     "userPassword": hashed_pass,
@@ -123,54 +115,7 @@ class LdapFunctions:
             if result:
                 return 'User added successfully'
             else:
-                return 'Error while creating the user'
+                return {'message': 'Error while creating the user'}, 500
 
-    def modify_user(self, username):
-        try:
-            self.connect()
-            user = json.loads(request.data)
-            # print(user)
-            m = hashlib.sha256(str(user['userPassword']).encode('utf-8'))
-            hashed_pass = m.hexdigest()
-
-            edits = {}
-            if 'displayName' in user:
-                edits['displayName'] = [(MODIFY_REPLACE, user['displayName'])]
-            if 'givenName' in user:
-                edits['givenName'] = [(MODIFY_REPLACE, user['givenName'])]
-            if 'uid' in user:
-                edits['uid'] = [(MODIFY_REPLACE, user['uid'])]
-            if 'userPKCS12' in user:
-                edits['userPKCS12'] = [(MODIFY_REPLACE, user['userPKCS12'])]
-            if 'userPassword' in user:
-                edits['userPassword'] = [(MODIFY_REPLACE, hashed_pass)]
-
-            res = self.conn.modify(
-                dn='cn=' + username + ',ou=Students,dc=insat,dc=chat,dc=com',
-                changes=edits,
-            )
-
-            self.conn.unbind()
-            if (res):
-                return 'User edited succefully'
-            else:
-                return 'An error has occured'
-
-        except ldap3.LDAPError:
-            self.conn.unbind()
-            return 'Authentication error'
-
-    def delete_user(self, username=None):
-        if (username == None):
-            return 'An error has occured'
-        try:
-            self.connect()
-            res = self.conn.delete('cn=' + username + ',ou=Students,dc=insat,dc=chat,dc=com')
-            self.conn.unbind()
-            if (res):
-                return 'User deleted succefully'
-            else:
-                return 'An error has occured'
-        except ldap3.LDAPError:
-            self.conn.unbind()
-            return 'Authentication error'
+    def __convert_user(self, ldap_user):
+        return {"username": ldap_user['attributes']['sn'][0], 'cardNumber': ldap_user['attributes']['uid'][0]}

@@ -35,6 +35,7 @@ export class RegisterComponent implements OnInit {
     const user = {
       ...this.registerForm.value
     }
+    console.log(user)
     await this.authService.register(user)
       .then(data => {
         this.isLoading = false;
