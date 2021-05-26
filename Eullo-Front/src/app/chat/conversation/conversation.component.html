@@ -1,7 +1,18 @@
-<!--suppress AngularUndefinedBinding -->
 <div class="conversation-container" *ngIf="!conversationUser">
-  Select a User (Nkhalik sinda trouchekha)
+  <div class="search-container">
+    <mat-card class="search">
+      <mat-card-header>
+        <mat-form-field appearance="fill" class="search-input">
+          <mat-label>Search Username</mat-label>
+          <mat-select>
+            <mat-option *ngFor="let user of users | async" [value]="user" (click)="conversationUser =user">{{user.username}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-header>
+    </mat-card>
+  </div>
 </div>
+
 <div class="conversation-container" *ngIf="conversationUser">
   <div class="user-container">
     <mat-card class="user">

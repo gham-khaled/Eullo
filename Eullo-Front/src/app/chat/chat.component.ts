@@ -30,10 +30,7 @@ export class ChatComponent implements OnInit {
       if (this.selectedUser?.username == sender)
         this.activeConversation?.receiveMessage(body);
       this.updateChatList(sender, body)
-
     })
-
-
   }
 
   updateConversation(user: UserMessage) {

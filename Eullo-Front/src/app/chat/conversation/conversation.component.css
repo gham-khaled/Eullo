@@ -7,7 +7,12 @@
   top: 6.75%;
   height: 93%;
   width: 75%;
+  background: #f5f5f5;
+
 }
+
+
+
 .user-image {
   background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
   background-size: cover;
@@ -20,7 +25,6 @@
 
  .send-message{
    position: relative;
-   width: 100%;
    bottom: 0;
  }
 
@@ -38,5 +42,20 @@
    background: #f5f5f5;
    overflow-y: scroll;
    width: 100%;
+
+ }
+
+ .search-input{
+   width: 55%;
+   margin: 0 auto;
+ }
+
+ .search-container{
+   width: 100%;
+   margin: 0 auto;
+   height: 10%;
+ }
+
+ .search{
 
  }

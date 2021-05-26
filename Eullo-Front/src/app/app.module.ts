@@ -25,6 +25,8 @@ import {MessageComponent} from "./chat/conversation/message/message.component";
 import {HttpClientModule} from "@angular/common/http";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatSelectModule} from '@angular/material/select';
+import {MatOptionModule} from "@angular/material/core";
 
 
 @NgModule({
@@ -56,7 +58,9 @@ import {MatBadgeModule} from '@angular/material/badge';
     MatDividerModule,
     MatProgressSpinnerModule,
     MatMenuModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatSelectModule,
+    MatOptionModule
   ],
   providers: [],
   bootstrap: [AppComponent]

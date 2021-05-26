@@ -13,6 +13,8 @@ import {Status} from "./message/status.enum";
 import {MessageComponent} from "./message/message.component";
 import {UserMessage} from "../../models/user-message.interface";
 import {AuthService} from "../../services/authentication/auth.service";
+import {ChatService} from "../../services/chat.service";
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-conversation',
@@ -31,16 +33,27 @@ export class ConversationComponent implements OnInit {
     {message: "Received message2", status: "received"},
     {message: "Received message3", status: "received"},
   ]
-  @Input()
-  conversationUser: UserMessage | undefined
-  @ViewChild('messagesContainer', {read: ViewContainerRef}) entry: ViewContainerRef | undefined;
-  @Output() newMessage = new EventEmitter<string>();
 
-  constructor(private resolver: ComponentFactoryResolver, private webSocketService: WebSocketService, private authService: AuthService) {
+  users: Observable<UserMessage[]> | undefined
+
+  @Input()
+  conversationUser: UserMessage | undefined;
+
+  @Output()
+  newMessage = new EventEmitter<string>();
+
+  @ViewChild('messagesContainer', {read: ViewContainerRef})
+  entry: ViewContainerRef | undefined;
+
+  constructor(private resolver: ComponentFactoryResolver,
+              private webSocketService: WebSocketService,
+              private authService: AuthService,
+              private chatService: ChatService) {
   }
 
   ngOnInit(): void {
-
+    this.users = this.chatService.users;
+    this.chatService.loadUsers();
   }
 
   newMessageComponent() {

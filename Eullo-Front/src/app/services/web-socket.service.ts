@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+
+// @ts-ignore
 import * as io from "socket.io-client" ;
 import {Observable} from "rxjs";
 import {environment} from "../../environments/environment";
@@ -14,7 +16,6 @@ export class WebSocketService {
   constructor(private authService: AuthService) {
     console.log("Before Connection")
     let connection_infos = this.authService.credentials
-    console.log(connection_infos)
     // @ts-ignore
     this.socket = io(environment.BASE_URL, {query: `username=${connection_infos?.username}`}, {'multiplex': false});
 

@@ -1,10 +1,10 @@
 <mat-card class="chat-item">
   <mat-card-header>
     <div mat-card-avatar class="user-image"></div>
-    <mat-card-title>{{user.username}}<span class="material-icons"
-                                           [ngClass]="{'connected': user.connected, 'disconnected':!user.connected}">scatter_plot</span>
+    <mat-card-title>{{user?.username}}<span class="material-icons"
+                                           [ngClass]="{'connected': user?.connected, 'disconnected':!user?.connected}">scatter_plot</span>
     </mat-card-title>
-    <mat-card-subtitle>{{user.lastReceivedMessage}}</mat-card-subtitle>
+    <mat-card-subtitle>{{user?.lastReceivedMessage}}</mat-card-subtitle>
   </mat-card-header>
 </mat-card>
 

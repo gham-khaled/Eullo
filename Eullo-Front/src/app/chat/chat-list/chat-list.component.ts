@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {WebSocketService} from "../../services/web-socket.service";
 import {UserMessage} from "../../models/user-message.interface";
+import {ChatService} from "../../services/chat.service";
+import {Observable} from "rxjs";
 
 
 
@@ -11,16 +13,16 @@ import {UserMessage} from "../../models/user-message.interface";
 })
 export class ChatListComponent implements OnInit {
 
-  @Input()
-  users: UserMessage[] | undefined
+  users: Observable<UserMessage[]> | undefined
 
   @Output() selectConversation = new EventEmitter<UserMessage>();
 
-  constructor() {
+  constructor(private chatService: ChatService) {
   }
 
   ngOnInit(): void {
-    console.log(this.users)
+    this.users = this.chatService.users;
+    this.chatService.loadUsers();
   }
 
   showUser(user: UserMessage) {
