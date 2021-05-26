@@ -1,4 +1,13 @@
-import {Component, ComponentFactoryResolver, Input, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {
+  Component,
+  ComponentFactoryResolver,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import {WebSocketService} from "../../services/web-socket.service";
 import {Status} from "./message/status.enum";
 import {MessageComponent} from "./message/message.component";
@@ -25,6 +34,7 @@ export class ConversationComponent implements OnInit {
   @Input()
   conversationUser: UserMessage | undefined
   @ViewChild('messagesContainer', {read: ViewContainerRef}) entry: ViewContainerRef | undefined;
+  @Output() newMessage = new EventEmitter<string>();
 
   constructor(private resolver: ComponentFactoryResolver, private webSocketService: WebSocketService, private authService: AuthService) {
   }
@@ -49,7 +59,7 @@ export class ConversationComponent implements OnInit {
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = this.message;
     componentRef.instance.status = "sent";
-
+    this.newMessage.next(this.message);
     this.message = "";
   }
 

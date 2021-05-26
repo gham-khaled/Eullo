@@ -1,5 +1,5 @@
 <app-navbar></app-navbar>
 <div>
   <app-chat-list [users]="users" (selectConversation)="updateConversation($event)"></app-chat-list>
-  <app-conversation [conversationUser]="selectedUser"></app-conversation>
+  <app-conversation [conversationUser]="selectedUser" (newMessage)="updateChatList(selectedUser.username,$event)"></app-conversation>
 </div>
