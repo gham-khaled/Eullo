@@ -61,7 +61,6 @@ def add_connection():
 
 @socketio.on('disconnect')
 def remove_connection():
-    # current_socket_id = request.sid
     username = request.args.get('username')
     del connected_users[username]
 

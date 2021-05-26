@@ -12,15 +12,20 @@ export class ChatComponent implements OnInit {
   users: UserMessage[] | undefined
   selectedUser: UserMessage | undefined
 
-  constructor() {
+  constructor(private webSocketService: WebSocketService) {
   }
 
   ngOnInit(): void {
     this.users = [
-      {username: "Sinda", lastReceivedMessage: "Salut!!", connected: false},
+      {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
       {username: "Hazem", lastReceivedMessage: "Ouech", connected: true},
-      {username: "Sa", lastReceivedMessage: "Aa saa", connected: true},
+      {username: "sa", lastReceivedMessage: "Aa saa", connected: true},
     ]
+
+    this.webSocketService.listen('message').subscribe((data) => {
+      console.log(data)
+    })
+
 
   }
 

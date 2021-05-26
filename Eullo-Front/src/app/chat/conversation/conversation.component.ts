@@ -3,6 +3,7 @@ import {WebSocketService} from "../../services/web-socket.service";
 import {Status} from "./message/status.enum";
 import {MessageComponent} from "./message/message.component";
 import {UserMessage} from "../../models/user-message.interface";
+import {AuthService} from "../../services/authentication/auth.service";
 
 @Component({
   selector: 'app-conversation',
@@ -22,10 +23,10 @@ export class ConversationComponent implements OnInit {
     {message: "Received message3", status: "received"},
   ]
   @Input()
-  user: UserMessage | undefined
+  conversationUser: UserMessage | undefined
   @ViewChild('messagesContainer', {read: ViewContainerRef}) entry: ViewContainerRef | undefined;
 
-  constructor(private resolver: ComponentFactoryResolver, private webSocketService: WebSocketService) {
+  constructor(private resolver: ComponentFactoryResolver, private webSocketService: WebSocketService, private authService: AuthService) {
   }
 
   ngOnInit(): void {
@@ -41,10 +42,16 @@ export class ConversationComponent implements OnInit {
   }
 
   sendMessage() {
-    this.webSocketService.emit('message', this.message)
+
+    this.webSocketService.emit('message', {
+      'message': this.message,
+      'receiver': this.conversationUser?.username,
+      'sender': this.authService.credentials?.username
+    })
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = this.message;
     componentRef.instance.status = "sent";
+
     this.message = "";
   }
 
@@ -52,7 +59,6 @@ export class ConversationComponent implements OnInit {
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = this.message;
     componentRef.instance.status = "received";
-    // this.webSocketService.emit('message', this.message)
     this.message = "";
   }
 }
