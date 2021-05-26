@@ -2,7 +2,7 @@
   <mat-toolbar-row>
     <span>Eullo.</span>
     <span class="example-spacer"></span>
-    <button mat-button [matMenuTriggerFor]="menu"><span class="material-icons">person_outline</span>Sinda</button>
+    <button mat-button [matMenuTriggerFor]="menu"><span class="material-icons">person_outline</span>{{username}}</button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="logout()"><span class="material-icons">logout</span>Logout</button>
     </mat-menu>

@@ -46,10 +46,12 @@ class Auth(Resource):
 
 @socketio.on('message')
 def send_message(message):
-    # message = json.loads(msg)
     print(message)
-    emit('custom_receive', message, broadcast=True)
-    send(message, broadcast=True)
+    receiver = message['receiver']
+    sender = message['sender']
+    body = message['body']
+    if receiver in connected_users:
+        send(message, broadcast=True, room=connected_users[receiver])
 
 
 @socketio.on('connect')

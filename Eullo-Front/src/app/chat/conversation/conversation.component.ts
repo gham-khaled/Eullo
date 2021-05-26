@@ -30,9 +30,7 @@ export class ConversationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.webSocketService.listen('message').subscribe((data) => {
-      console.log(data)
-    })
+
   }
 
   newMessageComponent() {
@@ -44,7 +42,7 @@ export class ConversationComponent implements OnInit {
   sendMessage() {
 
     this.webSocketService.emit('message', {
-      'message': this.message,
+      'body': this.message,
       'receiver': this.conversationUser?.username,
       'sender': this.authService.credentials?.username
     })
@@ -55,10 +53,10 @@ export class ConversationComponent implements OnInit {
     this.message = "";
   }
 
-  receiveMessage() {
+  receiveMessage(message: string) {
     const componentRef = this.newMessageComponent();
-    componentRef.instance.message = this.message;
+    componentRef.instance.message = message;
     componentRef.instance.status = "received";
-    this.message = "";
+    // this.message = "";
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../services/authentication/auth.service";
 import {Router} from "@angular/router";
 
@@ -8,10 +8,15 @@ import {Router} from "@angular/router";
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+  username: string | undefined
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(private authService: AuthService, private router: Router) {
+  }
+
   panelOpenState: boolean = false;
+
   ngOnInit(): void {
+    this.username = this.authService.credentials?.username
   }
 
   logout() {

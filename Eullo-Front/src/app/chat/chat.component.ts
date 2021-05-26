@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {WebSocketService} from "../services/web-socket.service";
 import {UserMessage} from "../models/user-message.interface";
+import {ConversationComponent} from "./conversation/conversation.component";
 
 @Component({
   selector: 'app-chat',
@@ -8,6 +9,7 @@ import {UserMessage} from "../models/user-message.interface";
   styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+  @ViewChild(ConversationComponent) activeConversation: ConversationComponent | undefined;
 
   users: UserMessage[] | undefined
   selectedUser: UserMessage | undefined
@@ -17,13 +19,18 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.users = [
+      {username: "douda", lastReceivedMessage: "Ouech", connected: true},
       {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
-      {username: "Hazem", lastReceivedMessage: "Ouech", connected: true},
-      {username: "sa", lastReceivedMessage: "Aa saa", connected: true},
+      {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
     ]
 
-    this.webSocketService.listen('message').subscribe((data) => {
-      console.log(data)
+    // @ts-ignore
+    this.webSocketService.listen('message').subscribe((message: Message) => {
+      const {sender, receiver, body} = message
+      if (this.selectedUser?.username == sender)
+        this.activeConversation?.receiveMessage(body);
+      this.updateChatList(sender, body)
+
     })
 
 
@@ -33,4 +40,23 @@ export class ChatComponent implements OnInit {
     this.selectedUser = user
   }
 
+  updateChatList(username: string, body: string) {
+    // @ts-ignore
+    const index = this.users.findIndex(user => user.username === username);
+    console.log(index)
+    if (index == -1)
+      this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
+    else {
+      this.users?.splice(index, 1)
+      this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
+    }
+  }
+
 }
+
+export interface Message {
+  body: string;
+  sender: string;
+  receiver: string;
+}
+
