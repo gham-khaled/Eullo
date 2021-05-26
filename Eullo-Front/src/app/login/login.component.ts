@@ -32,11 +32,11 @@ export class LoginComponent implements OnInit {
     console.log(this.loginForm.get('username')?.value,this.loginForm.get('password')?.value)
     await this.authService.login(this.loginForm.get('username')?.value,this.loginForm.get('password')?.value)
       .then(data  => {
-        // localStorage.setItem('user', JSON.stringify(data));
-        // this.authService.credentials = localStorage.getItem('user');
+        localStorage.setItem('user', JSON.stringify(data));
+        this.authService.credentials = localStorage.getItem('user');
         this.router.navigate(['/']).then(() => {
           console.log('Login successful: Redirecting...');
-          console.clear();
+          // console.clear();
         });
         this.isLoading = false;
       })

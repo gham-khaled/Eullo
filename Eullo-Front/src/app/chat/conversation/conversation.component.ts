@@ -12,18 +12,19 @@ export class ConversationComponent implements OnInit {
 
   message: string = "";
   // @ts-ignore
-  messages:[{ message: string, status: string }] = [
-    {message:"Sent message1", status: "sent"},
-    {message:"Sent message2", status: "sent"},
-    {message:"Received message1", status: "received"},
-    {message:"Sent message3", status: "sent"},
-    {message:"Received message2", status: "received"},
-    {message:"Received message3", status: "received"},
+  messages: [{ message: string, status: string }] = [
+    {message: "Sent message1", status: "sent"},
+    {message: "Sent message2", status: "sent"},
+    {message: "Received message1", status: "received"},
+    {message: "Sent message3", status: "sent"},
+    {message: "Received message2", status: "received"},
+    {message: "Received message3", status: "received"},
   ]
 
-  // @ts-ignore
-  @ViewChild('messagesContainer', { read: ViewContainerRef }) entry: ViewContainerRef;
-  constructor(private resolver: ComponentFactoryResolver) {}
+  @ViewChild('messagesContainer', {read: ViewContainerRef}) entry: ViewContainerRef | undefined;
+
+  constructor(private resolver: ComponentFactoryResolver, private webSocketService: WebSocketService) {
+  }
 
   ngOnInit(): void {
     // this.webSocketService.listen('message').subscribe((data) => {
@@ -32,20 +33,20 @@ export class ConversationComponent implements OnInit {
   }
 
   newMessageComponent() {
-      const factory = this.resolver.resolveComponentFactory(MessageComponent);
-      // @ts-ignore
+    const factory = this.resolver.resolveComponentFactory(MessageComponent);
+    // @ts-ignore
     return this.entry.createComponent(factory);
   }
 
-  sendMessage(){
+  sendMessage() {
+    // this.webSocketService.emit('message', this.message)
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = this.message;
     componentRef.instance.status = "sent";
-    // this.webSocketService.emit('message', this.message)
     this.message = "";
   }
 
-  receiveMessage(){
+  receiveMessage() {
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = this.message;
     componentRef.instance.status = "received";

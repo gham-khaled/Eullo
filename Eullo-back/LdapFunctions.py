@@ -74,27 +74,23 @@ class LdapFunctions:
             return user
 
     def login(self, username, password):
-        try:
-            self.connect()
-            m = hashlib.sha256(str(password).encode('utf-8'))
-            hashed_pass = m.hexdigest()
-            self.conn.search('ou=Students,dc=insat,dc=chat,dc=com',
-                             '(&(objectclass=inetOrgPerson)(sn=' + username + ')(userPassword=' + hashed_pass + '))',
-                             attributes=['sn', 'displayName', 'givenName', 'uid', 'userPKCS12', 'userSMIMECertificate'])
-            if (not self.conn.entries):
-                return None
-            else:
-                user = json.loads(self.conn.entries[0].entry_to_json())
-                print(user)
-                if ('userSMIMECertificate' in user['attributes']):
-                    L = ast.literal_eval(user['attributes']['userSMIMECertificate'][0])
-                    user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
+        self.connect()
+        m = hashlib.sha256(str(password).encode('utf-8'))
+        hashed_pass = m.hexdigest()
+        self.conn.search(f'ou=Students,{self.dc}',
+                         '(&(objectclass=inetOrgPerson)(sn=' + username + ')(userPassword=' + hashed_pass + '))',
+                         attributes=self.attributes)
+        if (not self.conn.entries):
+            return {'message': "Invalid Credentials"}, 400
+        else:
+            user = json.loads(self.conn.entries[0].entry_to_json())
+            print(user)
+            # if ('userSMIMECertificate' in user['attributes']):
+            #     L = ast.literal_eval(user['attributes']['userSMIMECertificate'][0])
+            #     user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
 
-            self.disconnect()
-            return user
-        except ldap3.LDAPError:
-            self.conn.unbind()
-            return 'authentication error'
+        self.disconnect()
+        return user
 
     def add_user(self, user):
         self.connect()

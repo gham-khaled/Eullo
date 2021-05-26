@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {HttpClient} from "@angular/common/http";
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {User} from "./models/user.interface";
 import {environment} from "../../../environments/environment";
 
@@ -8,8 +8,7 @@ import {environment} from "../../../environments/environment";
 })
 export class AuthService {
 
-  // @ts-ignore
-  private _credentials: string | null;
+  private _credentials: string | null | undefined;
 
   constructor(private http: HttpClient) {
     const savedCredentials = localStorage.getItem('user');
@@ -18,8 +17,7 @@ export class AuthService {
     }
   }
 
-  // @ts-ignore
-  get credentials(): string | null  | undefined {
+  get credentials(): string | null | undefined {
     return this._credentials;
   }
 
@@ -28,17 +26,19 @@ export class AuthService {
   }
 
   register(user: User): Promise<any> {
-    return this.http.post(`${environment.BASE_URL}`,user).toPromise();
+    return this.http.post(`${environment.BASE_URL}/auth`, user).toPromise();
   }
 
   async login(username: string, password: string) {
-    const user = {username, password};
-    this._credentials = JSON.stringify(user); // to remve later
-    localStorage.setItem('user', this._credentials); // to remove later
-    // return this.http.post(`${environment.BASE_URL}`, {username, password}).toPromise(); //uncomment this later
+    let params = new HttpParams().set('username', username);
+    params = params.append('password', password);
+    return this.http.get(`${environment.BASE_URL}/auth`, {params: params}).toPromise(); //uncomment this later
+    // this._credentials = JSON.stringify(user); // to remve later
+    // localStorage.setItem('user', this._credentials); // to remove later
+
   }
 
-  isAuthenticated() : boolean {
+  isAuthenticated(): boolean {
     return !!this.credentials;
   }
 

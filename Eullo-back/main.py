@@ -39,6 +39,11 @@ class Auth(Resource):
         user = request.get_json()
         return ldapFunctions.add_user(user)
 
+    def get(self):
+        username = request.args.get('username')
+        password = request.args.get('password')
+        return ldapFunctions.login(username, password)
+
 
 @socketio.on('message')
 def send_message(message):
