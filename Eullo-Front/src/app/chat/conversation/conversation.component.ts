@@ -33,7 +33,8 @@ export class ConversationComponent implements OnInit {
 
   newMessageComponent() {
       const factory = this.resolver.resolveComponentFactory(MessageComponent);
-      return this.entry.createComponent(factory);
+      // @ts-ignore
+    return this.entry.createComponent(factory);
   }
 
   sendMessage(){

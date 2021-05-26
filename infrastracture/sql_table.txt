@@ -1,0 +1,48 @@
+ GRANT ALL PRIVILEGES ON `%`.* TO 'admin'@#.#.#.#;
+
+CREATE DATABASE eullo;
+
+
+USE eullo;
+# DROP TABLE conversation;
+
+CREATE TABLE conversation (
+  user1 char(200),
+  user2 char(200),
+  msg1 char(200),
+  msg2 char(200),
+  date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+  primary key (user1, user2, date)
+);
+
+INSERT INTO conversation(user1,user2,msg1, msg2)
+VALUES 
+   ("khaled","sinda","salut sinda","salut sinda"),
+   ("sinda","khaled","salut khaled","salut khaled"),
+   ("hazem","khaled","waa","waa"),
+   ("khaled","sinda","chnahwelek","chnahwelek"),
+   ("sinda","khaled","hmd","hmd"),
+   ("khaled","sa","ahla sa","ahla sa")
+
+# DELETE FROM conversation;
+
+# SELECT * FROM conversation;
+
+SELECT  * FROM conversation WHERE
+(user1 = "khaled" AND user2 = "sinda") OR
+(user2 = "khaled" AND user1 = "sinda")
+ORDER BY date DESC
+
+ select distinct least(user1, user2) as sender , greatest(user1, user2) as receiver, date as ts from conversation 
+ select * from conversation GROUP BY least(user1, user2), greatest(user1, user2)
+
+ SELECT * FROM my_table GROUP BY user1,user2  WHERE
+(user1 = "khaled" OR user2 = "khaled") 
+
+
+
+
+SUSE eullo;
+SELECT t1.* FROM conversation t1
+  JOIN (SELECT user1, user2, MAX(date) date FROM conversation GROUP BY least(user1, user2), greatest(user1, user2)) t2
+    ON (t1.user1 = t2.user1 OR  t1.user2 = t2.user2) AND t1.date = t2.date;

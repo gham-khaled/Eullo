@@ -18,11 +18,12 @@ export class AuthService {
     }
   }
 
-  get credentials(): string | null {
+  // @ts-ignore
+  get credentials(): string | null  | undefined {
     return this._credentials;
   }
 
-  set credentials(value: string | null) {
+  set credentials(value: string | null | undefined) {
     this._credentials = value;
   }
 
