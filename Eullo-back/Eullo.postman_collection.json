@@ -37,18 +37,89 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{Eullo}}/user",
+					"raw": "{{Eullo}}/user/douda",
 					"host": [
 						"{{Eullo}}"
 					],
 					"path": [
-						"user"
+						"user",
+						"douda"
 					],
 					"query": [
 						{
 							"key": "username",
 							"value": "douda",
 							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Eullo}}/users",
+					"host": [
+						"{{Eullo}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "username",
+							"value": "douda",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Messages",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get conversation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Eullo}}/message/khaled?partner=sinda",
+					"host": [
+						"{{Eullo}}"
+					],
+					"path": [
+						"message",
+						"khaled"
+					],
+					"query": [
+						{
+							"key": "partner",
+							"value": "sinda"
 						}
 					]
 				}

@@ -25,14 +25,7 @@ export class ConversationComponent implements OnInit {
 
   message: string = "";
   // @ts-ignore
-  messages: [{ message: string, status: string }] = [
-    {message: "Sent message1", status: "sent"},
-    {message: "Sent message2", status: "sent"},
-    {message: "Received message1", status: "received"},
-    {message: "Sent message3", status: "sent"},
-    {message: "Received message2", status: "received"},
-    {message: "Received message3", status: "received"},
-  ]
+  messages: [{ message: string, status: string }] = []
 
   users: Observable<UserMessage[]> | undefined
 

@@ -5,7 +5,6 @@ import {ChatService} from "../../services/chat.service";
 import {Observable} from "rxjs";
 
 
-
 @Component({
   selector: 'app-chat-list',
   templateUrl: './chat-list.component.html',
@@ -25,7 +24,8 @@ export class ChatListComponent implements OnInit {
     this.chatService.loadUsers();
   }
 
-  showUser(user: UserMessage) {
+  showUser(user: UserMessage | null) {
+    // @ts-ignore
     this.selectConversation.next(user)
   }
 }

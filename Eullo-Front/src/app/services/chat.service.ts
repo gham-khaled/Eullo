@@ -3,6 +3,7 @@ import {BehaviorSubject} from "rxjs";
 import {UserMessage} from "../models/user-message.interface";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {AuthService} from "./authentication/auth.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +20,14 @@ export class ChatService {
   ]);
   readonly users = this._users.asObservable();
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient, private authService: AuthService) { }
 
   loadUsers(){
-    this.http.get(`${environment.BASE_URL}/users`).subscribe(
+    this.http.get(`${environment.BASE_URL}/messages/${this.authService.credentials?.username}`).subscribe(
       data => {
-        // this.dataStore.users = data;
+        console.log(data)
+        // @ts-ignore
+        this.dataStore.users = data;
         this._users.next(Object.assign({},this.dataStore).users);
       }, error => console.error("Couldn't load users")
     );
