@@ -11,7 +11,8 @@ import {ConversationComponent} from "./conversation/conversation.component";
 export class ChatComponent implements OnInit {
   @ViewChild(ConversationComponent) activeConversation: ConversationComponent | undefined;
 
-  users: UserItem[] | undefined
+  users: UserItem[] | undefined;
+
   selectedUser: UserItem | undefined
 
   constructor(private webSocketService: WebSocketService) {
@@ -33,9 +34,9 @@ export class ChatComponent implements OnInit {
     })
   }
 
-  updateConversation(user: UserItem) {
-    this.selectedUser = user
-  }
+  // updateConversation(user: UserItem) {
+  //   this.selectedUser = user
+  // }
 
   updateChatList(username: string | undefined, body: string) {
     // @ts-ignore
@@ -54,7 +55,7 @@ export class ChatComponent implements OnInit {
 
 }
 
-export interface Message {
+interface Message {
   body: string;
   sender: string;
   receiver: string;

@@ -14,8 +14,6 @@ export class ChatListComponent implements OnInit {
 
   users: Observable<UserItem[]> | undefined
 
-  @Output() selectConversation = new EventEmitter<UserItem>();
-
   constructor(private chatService: ChatService) {
   }
 
@@ -24,8 +22,8 @@ export class ChatListComponent implements OnInit {
     this.chatService.loadUsersItems();
   }
 
-  showUser(user: UserItem | null) {
-    // @ts-ignore
-    this.selectConversation.next(user)
+  showUser(user: UserItem) {
+    if (user)
+      this.chatService.setPartner(user);
   }
 }

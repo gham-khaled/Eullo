@@ -15,6 +15,8 @@ import {UserItem} from "../../models/user-item.interface";
 import {AuthService} from "../../services/authentication/auth.service";
 import {ChatService} from "../../services/chat.service";
 import {Observable} from "rxjs";
+import {Message} from "../../models/message.interface";
+import {User} from "../../models/user.interface";
 
 @Component({
   selector: 'app-conversation',
@@ -24,16 +26,15 @@ import {Observable} from "rxjs";
 export class ConversationComponent implements OnInit {
 
   message: string = "";
-  // @ts-ignore
-  messages: [{ message: string, status: string }] = []
 
   users: Observable<UserItem[]> | undefined
 
-  @Input()
-  conversationUser: UserItem | undefined;
-
   @Output()
   newMessage = new EventEmitter<string>();
+
+  conversation: Observable<Message[]> | undefined;
+
+  partner: UserItem | undefined
 
   @ViewChild('messagesContainer', {read: ViewContainerRef})
   entry: ViewContainerRef | undefined;
@@ -47,6 +48,17 @@ export class ConversationComponent implements OnInit {
   ngOnInit(): void {
     this.users = this.chatService.users;
     this.chatService.loadUsersItems();
+    this.conversation = this.chatService.conversation;
+    this.chatService.partner.subscribe(
+      data => {
+        this.chatService.loadConversation(data.username);
+        this.partner = data;
+      }
+    )
+  }
+
+  setPartner(partner: UserItem) {
+    this.chatService.setPartner(partner);
   }
 
   newMessageComponent() {
@@ -56,17 +68,21 @@ export class ConversationComponent implements OnInit {
   }
 
   sendMessage() {
+    if (this.message){
+      //get private key from local storage
+      //encrypt message
 
-    this.webSocketService.emit('message', {
-      'body': this.message,
-      'receiver': this.conversationUser?.username,
-      'sender': this.authService.credentials?.username
-    })
-    const componentRef = this.newMessageComponent();
-    componentRef.instance.message = this.message;
-    componentRef.instance.status = "sent";
-    this.newMessage.next(this.message);
-    this.message = "";
+      this.webSocketService.emit('message', {
+        'body': this.message, // set this to the encrypted message
+        'receiver': this.partner,
+        'sender': this.authService.credentials?.username
+      })
+      const componentRef = this.newMessageComponent();
+      componentRef.instance.message = this.message;
+      componentRef.instance.status = "sent";
+      this.newMessage.next(this.message);
+      this.message = "";
+    }
   }
 
   receiveMessage(message: string) {

@@ -1,11 +1,11 @@
-<div class="conversation-container" *ngIf="!conversationUser">
+<div class="conversation-container" *ngIf="!conversation">
   <div class="search-container">
     <mat-card class="search">
       <mat-card-header>
         <mat-form-field appearance="fill" class="search-input">
           <mat-label>Search Username</mat-label>
           <mat-select>
-            <mat-option *ngFor="let user of users | async" [value]="user" (click)="conversationUser =user">{{user.username}}</mat-option>
+            <mat-option *ngFor="let user of users | async" [value]="user" (click)="setPartner(user)">{{user.username}}</mat-option>
           </mat-select>
         </mat-form-field>
       </mat-card-header>
@@ -13,18 +13,18 @@
   </div>
 </div>
 
-<div class="conversation-container" *ngIf="conversationUser">
+<div class="conversation-container" *ngIf="conversation && partner">
   <div class="user-container">
     <mat-card class="user">
       <mat-card-header>
         <div mat-card-avatar class="user-image"></div>
-        <mat-card-title>{{conversationUser.username}}</mat-card-title>
-        <mat-card-subtitle>{{conversationUser.connected ? "Connected" : "Not Connected" }}</mat-card-subtitle>
+        <mat-card-title>{{partner.username}}</mat-card-title>
+        <mat-card-subtitle>{{partner.connected ? "Connected" : "Not Connected" }}</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
   </div>
   <div class="messages-container">
-    <app-message *ngFor="let message of messages" [message]="message.message" [status]="message.status"></app-message>
+    <app-message *ngFor="let message of conversation |async" [message]="message.message" [status]="message.status"></app-message>
     <ng-container #messagesContainer></ng-container>
   </div>
   <div class="send-message">

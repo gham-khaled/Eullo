@@ -37,9 +37,9 @@ export class LoginComponent implements OnInit {
       .then(data => {
         localStorage.setItem('user', JSON.stringify(data));
         this.authService.credentials = <User> data;
+        //save certificate
         this.router.navigate(['/']).then(() => {
           console.log('Login successful: Redirecting...');
-          // console.clear();
         });
         this.isLoading = false;
       })
