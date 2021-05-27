@@ -29,19 +29,24 @@ conn = pymysql.connect(
 class Messages(Resource):
     def get(self, username):
         cur = conn.cursor()
-
         cur.execute(
             f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" OR user2 = "{username}") GROUP BY  least(user1, user2), greatest(user1, user2)')
-        conversation = cur.fetchall()
-        return conversation
+        conversations = cur.fetchall()
+        for conversation in conversations:
+            partner = conversation['sender'] if conversation['sender'] != username else conversation['receiver']
+            if partner in connected_users:
+                conversation['connected'] = True
+            else:
+                conversation['connected'] = False
+        return conversations
 
 
 class Message(Resource):
     def get(self, username):
         cur = conn.cursor()
-        username = request.args.get('username')
-
-        cur.execute(f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = {username} OR user2 = {username}) AND (user1 = "sinda" OR user2 = "sinda")')
+        partner = request.args.get('partner')
+        cur.execute(
+            f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" AND user2 = "{partner}") OR (user1 = "{partner}" AND user2 = "{username}")')
         conversation = cur.fetchall()
         return conversation
 
@@ -58,12 +63,20 @@ class User(Resource):
 
 class Users(Resource):
     def get(self):
-        return ldapFunctions.get_users()
+
+        all_users = ldapFunctions.get_users()
+        for user in all_users:
+            if user['username'] in connected_users:
+                user['connected'] = True
+            else:
+                user['connected'] = False
+        return all_users
 
 
 class Auth(Resource):
     def post(self):
         user = request.get_json()
+        print(user)
         return ldapFunctions.add_user(user)
 
     def get(self):
@@ -78,6 +91,9 @@ def send_message(message):
     receiver = message['receiver']
     sender = message['sender']
     body = message['body']
+    cur = conn.cursor()
+    cur.execute("INSERT INTO conversation (user1,user2,msg1,msg2) VALUES (%s,%s,%s,%s)", (sender, receiver, body, body))
+    conn.commit()
     if receiver in connected_users:
         send(message, broadcast=True, room=connected_users[receiver])
 
@@ -119,6 +135,7 @@ api.add_resource(User, '/user/<username>')
 api.add_resource(Users, '/users')
 api.add_resource(Auth, '/auth')
 api.add_resource(Messages, '/messages/<username>')
+api.add_resource(Message, '/message/<username>')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=8080)

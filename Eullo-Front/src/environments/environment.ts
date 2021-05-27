@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  BASE_URL: "http://127.0.0.1:5000/"
+  BASE_URL: "http://52.50.211.64:8080/"
 
 };
 
