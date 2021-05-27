@@ -1,32 +1,49 @@
 import json
-
-import sqlalchemy
 from flask import Flask, request
 import flask.scaffold
 
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
-
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
-from flask_sqlalchemy import SQLAlchemy
 from LdapFunctions import LdapFunctions
 import pymysql
 
 app = Flask(__name__)
-
 
 api = Api(app)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 ldapFunctions = LdapFunctions()
+conn = pymysql.connect(
+    host='eullo-cluster.cluster-c0zm1odhbvnh.eu-west-1.rds.amazonaws.com',
+    port=3306,
+    user='douda',
+    password='douda123',
+    db='eullo',
+    cursorclass=pymysql.cursors.DictCursor
+)
 
+
+class Messages(Resource):
+    def get(self, username):
+        cur = conn.cursor()
+
+        cur.execute(
+            f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" OR user2 = "{username}") GROUP BY  least(user1, user2), greatest(user1, user2)')
+        conversation = cur.fetchall()
+        return conversation
 
 
 class Message(Resource):
     def get(self, username):
-        pass
+        cur = conn.cursor()
+        username = request.args.get('username')
+
+        cur.execute(f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = {username} OR user2 = {username}) AND (user1 = "sinda" OR user2 = "sinda")')
+        conversation = cur.fetchall()
+        return conversation
 
 
 class User(Resource):
@@ -101,13 +118,7 @@ def broadcast_disconnect(msg):
 api.add_resource(User, '/user/<username>')
 api.add_resource(Users, '/users')
 api.add_resource(Auth, '/auth')
+api.add_resource(Messages, '/messages/<username>')
 
 if __name__ == '__main__':
-    conn = pymysql.connect(
-        host='eullo-cluster.cluster-c0zm1odhbvnh.eu-west-1.rds.amazonaws.com',
-        port=3306,
-        user='douda',
-        password='douda123',
-        db='eullo',
-    )
     app.run(debug=True)

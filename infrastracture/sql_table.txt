@@ -28,16 +28,19 @@ VALUES
 
 # SELECT * FROM conversation;
 
-SELECT  * FROM conversation WHERE
-(user1 = "khaled" AND user2 = "sinda") OR
-(user2 = "khaled" AND user1 = "sinda")
-ORDER BY date DESC
+### Get all messages for a user
+USE eullo;
+ SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "khaled" OR user2 = "khaled") GROUP BY  least(user1, user2), greatest(user1, user2)
+
+##### Get a full conversation
+ SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "khaled" OR user2 = "khaled") AND (user1 = "sinda" OR user2 = "sinda")
+
 
  select distinct least(user1, user2) as sender , greatest(user1, user2) as receiver, date as ts from conversation 
  select * from conversation GROUP BY least(user1, user2), greatest(user1, user2)
 
- SELECT * FROM my_table GROUP BY user1,user2  WHERE
-(user1 = "khaled" OR user2 = "khaled") 
+ SELECT * FROM conversation   WHERE (user1 = "khaled" OR user2 = "khaled") GROUP BY user1,user2
+
 
 
 
