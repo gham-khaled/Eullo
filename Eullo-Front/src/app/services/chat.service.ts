@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from "rxjs";
-import {UserMessage} from "../models/user-message.interface";
+import {UserItem} from "../models/user-item.interface";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 import {AuthService} from "./authentication/auth.service";
+import {map, retry} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class ChatService {
     users: []
   }
 
-  private _users = new BehaviorSubject<UserMessage[]>([
+  private _users = new BehaviorSubject<UserItem[]>([
     {username: "douda", lastReceivedMessage: "Ouech", connected: true},
     {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
     {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
@@ -22,8 +23,20 @@ export class ChatService {
 
   constructor(private http:HttpClient, private authService: AuthService) { }
 
-  loadUsers(){
-    this.http.get(`${environment.BASE_URL}/messages/${this.authService.credentials?.username}`).subscribe(
+  loadUsersItems(){
+    const currentUsername: string | undefined = this.authService.credentials?.username;
+    this.http.get(`${environment.BASE_URL}/messages/${currentUsername}`)
+      .pipe(
+        map(items => {
+          // @ts-ignore
+          items = items.map(item => ({
+            username: item.receiver === currentUsername ? item.sender : item.receiver,
+            lastReceivedMessage: item.receiver === currentUsername ? item.encrypted_receiver : item.encrypted_sender,
+            connected: item.connected
+          }));
+          return items;
+        }))
+      .subscribe(
       data => {
         console.log(data)
         // @ts-ignore

@@ -11,7 +11,7 @@ import {
 import {WebSocketService} from "../../services/web-socket.service";
 import {Status} from "./message/status.enum";
 import {MessageComponent} from "./message/message.component";
-import {UserMessage} from "../../models/user-message.interface";
+import {UserItem} from "../../models/user-item.interface";
 import {AuthService} from "../../services/authentication/auth.service";
 import {ChatService} from "../../services/chat.service";
 import {Observable} from "rxjs";
@@ -27,10 +27,10 @@ export class ConversationComponent implements OnInit {
   // @ts-ignore
   messages: [{ message: string, status: string }] = []
 
-  users: Observable<UserMessage[]> | undefined
+  users: Observable<UserItem[]> | undefined
 
   @Input()
-  conversationUser: UserMessage | undefined;
+  conversationUser: UserItem | undefined;
 
   @Output()
   newMessage = new EventEmitter<string>();
@@ -46,7 +46,7 @@ export class ConversationComponent implements OnInit {
 
   ngOnInit(): void {
     this.users = this.chatService.users;
-    this.chatService.loadUsers();
+    this.chatService.loadUsersItems();
   }
 
   newMessageComponent() {

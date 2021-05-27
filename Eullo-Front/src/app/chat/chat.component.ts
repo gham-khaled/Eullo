@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {WebSocketService} from "../services/web-socket.service";
-import {UserMessage} from "../models/user-message.interface";
+import {UserItem} from "../models/user-item.interface";
 import {ConversationComponent} from "./conversation/conversation.component";
 
 @Component({
@@ -11,8 +11,8 @@ import {ConversationComponent} from "./conversation/conversation.component";
 export class ChatComponent implements OnInit {
   @ViewChild(ConversationComponent) activeConversation: ConversationComponent | undefined;
 
-  users: UserMessage[] | undefined
-  selectedUser: UserMessage | undefined
+  users: UserItem[] | undefined
+  selectedUser: UserItem | undefined
 
   constructor(private webSocketService: WebSocketService) {
   }
@@ -33,7 +33,7 @@ export class ChatComponent implements OnInit {
     })
   }
 
-  updateConversation(user: UserMessage) {
+  updateConversation(user: UserItem) {
     this.selectedUser = user
   }
 

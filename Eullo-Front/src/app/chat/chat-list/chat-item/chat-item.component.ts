@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {UserMessage} from "../../../models/user-message.interface";
+import {UserItem} from "../../../models/user-item.interface";
 
 @Component({
   selector: 'app-chat-item',
@@ -9,7 +9,7 @@ import {UserMessage} from "../../../models/user-message.interface";
 export class ChatItemComponent implements OnInit {
 
   @Input('user')
-  user: UserMessage | undefined;
+  user: UserItem | undefined;
 
 
   constructor() {
