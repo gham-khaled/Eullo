@@ -4,4 +4,6 @@ export interface User {
   username: string;
   password?: string;
   cardNumber: string;
+  certificateRequest?: string;
+  encryptedPrivateKey?: string;
 }
