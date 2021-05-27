@@ -21,7 +21,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "server" {
-  ami = data.aws_ami.ubuntu.id
+  ami = var.ami == "" ? data.aws_ami.ubuntu.id : var.ami
   instance_type = var.instance_type
   associate_public_ip_address = var.associate_public_ip_address
   hibernation = true

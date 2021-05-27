@@ -10,5 +10,9 @@ variable "associate_public_ip_address" {
 variable "subnet_id" {}
 variable "name" {}
 variable "private_ip" {
+
+}
+variable "ami" {
+  default = ""
 }
 variable "key" {}

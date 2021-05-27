@@ -1,4 +1,6 @@
 import json
+
+import sqlalchemy
 from flask import Flask, request
 import flask.scaffold
 
@@ -7,15 +9,24 @@ flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restful import Api, Resource
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
-
+from flask_sqlalchemy import SQLAlchemy
 from LdapFunctions import LdapFunctions
+import pymysql
 
 app = Flask(__name__)
+
+
 api = Api(app)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 ldapFunctions = LdapFunctions()
+
+
+
+class Message(Resource):
+    def get(self, username):
+        pass
 
 
 class User(Resource):
@@ -92,4 +103,11 @@ api.add_resource(Users, '/users')
 api.add_resource(Auth, '/auth')
 
 if __name__ == '__main__':
+    conn = pymysql.connect(
+        host='eullo-cluster.cluster-c0zm1odhbvnh.eu-west-1.rds.amazonaws.com',
+        port=3306,
+        user='douda',
+        password='douda123',
+        db='eullo',
+    )
     app.run(debug=True)

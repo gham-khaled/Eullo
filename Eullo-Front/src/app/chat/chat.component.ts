@@ -37,14 +37,17 @@ export class ChatComponent implements OnInit {
     this.selectedUser = user
   }
 
-  updateChatList(username: string, body: string) {
+  updateChatList(username: string | undefined, body: string) {
     // @ts-ignore
     const index = this.users.findIndex(user => user.username === username);
     console.log(index)
     if (index == -1)
-      this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
+      { // @ts-ignore
+        this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
+      }
     else {
       this.users?.splice(index, 1)
+      // @ts-ignore
       this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
     }
   }

@@ -1,4 +1,4 @@
-<mat-card class="chat-item">
+<mat-card class="chat-item" *ngIf="user">
   <mat-card-header>
     <div mat-card-avatar class="user-image"></div>
     <mat-card-title>{{user?.username}}<span class="material-icons"
