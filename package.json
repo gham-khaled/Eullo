@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@types/node-forge": "^0.9.9",
+    "node-forge": "^0.10.0"
+  }
+}
