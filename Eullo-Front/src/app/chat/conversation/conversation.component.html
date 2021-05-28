@@ -13,13 +13,13 @@
   </div>
 </div>
 
-<div class="conversation-container" *ngIf="conversation && partner.username">
+<div class="conversation-container" *ngIf="conversation && partner?.username">
   <div class="user-container">
     <mat-card class="user">
       <mat-card-header>
         <div mat-card-avatar class="user-image"></div>
-        <mat-card-title>{{partner.username}}</mat-card-title>
-        <mat-card-subtitle>{{partner.connected ? "Connected" : "Not Connected" }}</mat-card-subtitle>
+        <mat-card-title>{{partner?.username}}</mat-card-title>
+        <mat-card-subtitle>{{partner?.connected ? "Connected" : "Not Connected" }}</mat-card-subtitle>
       </mat-card-header>
     </mat-card>
   </div>

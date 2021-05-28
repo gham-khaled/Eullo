@@ -79,8 +79,10 @@ export class RegisterComponent implements OnInit {
       encryptedPrivateKey,
       certificateRequest: certificate
     }
+    console.log(user)
     await this.authService.register(user)
       .then(data => {
+        console.log(data)
         this.isLoading = false;
         localStorage.setItem('priv_key',pki.privateKeyToPem(keyPair.privateKey));
         localStorage.setItem('pub_key',pki.publicKeyToPem(keyPair.publicKey));
@@ -92,6 +94,10 @@ export class RegisterComponent implements OnInit {
         this.router.navigate(['/login']).then(() => {
           console.log('Register successful: Redirecting...');
         });
+        // this.router.navigate(['/login']).then(() => {
+        //   console.log('Register successful: Redirecting...');
+        //   console.clear();
+        // });
       })
       .catch(error => {
         console.log(error);

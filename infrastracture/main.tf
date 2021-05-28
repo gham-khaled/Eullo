@@ -65,7 +65,7 @@ resource "aws_eip" "eip_assoc_chat_server" {
 resource "aws_rds_cluster" "message_db" {
   cluster_identifier = "eullo-cluster"
   engine = "aurora-mysql"
-  engine_version = "5.7.mysql_aurora.2.03.2"
+  engine_version = "5.7.mysql_aurora.2.07.1"
   availability_zones = [
     "${local.region}b",
     "${local.region}a",

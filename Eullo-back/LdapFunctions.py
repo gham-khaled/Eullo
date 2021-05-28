@@ -16,7 +16,7 @@ class LdapFunctions:
         self.ldap_username = f'cn=admin,{self.dc}'
         self.ldap_password = 'douda123'
         # self.attributes =  ['displayName', 'uid', 'givenName', 'userPKCS12', 'sn', 'userSMIMECertificate']
-        self.attributes = ['uid', 'givenName', 'sn']
+        self.attributes = ['uid', 'givenName', 'sn', 'userCertificate', 'userSMIMECertificate', 'userPKCS12']
 
         self.ldap_server = Server(host=self.host, port=389, use_ssl=False, get_info='ALL')
 
@@ -87,7 +87,6 @@ class LdapFunctions:
 
     def add_user(self, user):
         self.connect()
-        print(user)
         # before adding i need to select by username to make sure it's unique
         self.conn.search(self.dn, f"(&(objectclass=inetOrgPerson)(sn={user['username']}))", attributes=['sn'])
         if self.conn.entries:
@@ -103,11 +102,11 @@ class LdapFunctions:
                     "sn": user['username'],
                     "givenName": f"{user['name']} {user['lastName']}",
                     "uid": user['cardNumber'],
-
                     # "displayName": user['displayName'],
                     "userPassword": hashed_pass,
-                    # "userPKCS12": user['userPKCS12'],
-                    # "userCertificate":
+                    "userPKCS12": user['encryptedPrivateKey'],
+                    # "userCertificate": (user['certificate']).encode('ascii'),
+                    "userSMIMECertificate": user['certificate']
                 },
             )
 
@@ -118,4 +117,5 @@ class LdapFunctions:
                 return {'message': 'Error while creating the user'}, 500
 
     def __convert_user(self, ldap_user):
-        return {"username": ldap_user['attributes']['sn'][0], 'cardNumber': ldap_user['attributes']['uid'][0]}
+        return {"username": ldap_user['attributes']['sn'][0], 'cardNumber': ldap_user['attributes']['uid'][0],
+                "certificate": ldap_user['attributes']['userSMIMECertificate'][0]}

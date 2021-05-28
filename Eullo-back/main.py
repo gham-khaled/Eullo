@@ -2,6 +2,11 @@ import json
 from flask import Flask, request
 import flask.scaffold
 
+from CAFunctions import CAFunctions
+
+# import eventlet
+# eventlet.monkey_patch()
+
 flask.helpers._endpoint_from_view_func = flask.scaffold._endpoint_from_view_func
 from flask_restful import Api, Resource
 from flask_cors import CORS
@@ -16,13 +21,17 @@ CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
 ldapFunctions = LdapFunctions()
+ca_functions = CAFunctions()
+
 conn = pymysql.connect(
     host='eullo-cluster.cluster-c0zm1odhbvnh.eu-west-1.rds.amazonaws.com',
     port=3306,
     user='douda',
     password='douda123',
     db='eullo',
-    cursorclass=pymysql.cursors.DictCursor
+    cursorclass=pymysql.cursors.DictCursor,
+    autocommit=True
+
 )
 
 
@@ -48,7 +57,8 @@ class Message(Resource):
         cur.execute(
             f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" AND user2 = "{partner}") OR (user1 = "{partner}" AND user2 = "{username}")')
         conversation = cur.fetchall()
-        return conversation
+        partner_infos= ldapFunctions.get_user(username)
+        return {"conversation": conversation, "certificate": partner_infos['certificate']}
 
 
 class User(Resource):
@@ -57,7 +67,8 @@ class User(Resource):
 
     def post(self):
         user = request.get_json()
-        return ldapFunctions.add_user(user)
+        print(user)
+        # return ldapFunctions.add_user(user)
     ######### LDAP
 
 
@@ -76,8 +87,10 @@ class Users(Resource):
 class Auth(Resource):
     def post(self):
         user = request.get_json()
-        print(user)
-        return ldapFunctions.add_user(user)
+        # print(user)
+        user['certificate'], user['pubKey'] = ca_functions.sign(user['certificateRequest'], user['username'])
+        ldapFunctions.add_user(user)
+        return user['certificate'].decode("utf-8")
 
     def get(self):
         username = request.args.get('username')
@@ -90,19 +103,26 @@ def send_message(message):
     print(message)
     receiver = message['receiver']
     sender = message['sender']
-    body = message['body']
+    sender_encrypted = message['sender_encrypted']
+    receiver_encrypted = message['receiver_encrypted']
     cur = conn.cursor()
-    cur.execute("INSERT INTO conversation (user1,user2,msg1,msg2) VALUES (%s,%s,%s,%s)", (sender, receiver, body, body))
+    cur.execute("INSERT INTO conversation (user1,user2,msg1,msg2) VALUES (%s, %s, %s, %s)",
+                (sender, receiver, sender_encrypted, receiver_encrypted))
     conn.commit()
+    print(connected_users)
     if receiver in connected_users:
         send(message, broadcast=True, room=connected_users[receiver])
 
 
 @socketio.on('connect')
 def add_connection():
+    print("")
     current_socket_id = request.sid
     username = request.args.get('username')
+    certificate = request.args.get('certificate')
+    print(certificate)
     connected_users[username] = current_socket_id
+    print(connected_users)
 
 
 @socketio.on('disconnect')
@@ -138,4 +158,7 @@ api.add_resource(Messages, '/messages/<username>')
 api.add_resource(Message, '/message/<username>')
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=8080)
+    # socketio.run()
+    #
+    # app.run(  host="0.0.0.0", port=8080)
+    socketio.run(app, host='0.0.0.0', port=8080)

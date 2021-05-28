@@ -15,7 +15,10 @@ import {ChatService} from "../../services/chat.service";
 import {Observable} from "rxjs";
 import {Message} from "../../models/message.interface";
 import {User} from "../../models/user.interface";
+import * as forge from "node-forge";
 
+const pki = forge.pki
+const rsa = pki.rsa;
 @Component({
   selector: 'app-conversation',
   templateUrl: './conversation.component.html',
@@ -72,8 +75,19 @@ export class ConversationComponent implements OnInit {
       //get private key from local storage
       //encrypt message
       console.log(this.message)
+      const partner_certificate = localStorage.getItem('partner')
+      const public_key_pem = localStorage.getItem('pub_key')
+      // @ts-ignore
+      const certif = pki.certificateFromPem(partner_certificate)
+      // @ts-ignore
+      const pub_key = pki.publicKeyFromPem(public_key_pem)
+      // @ts-ignore
+      const receiver_encrypted = certif.publicKey.encrypt(this.message)
+      const sender_encrypted = pub_key.encrypt(this.message)
+
       this.webSocketService.emit('message', {
-        'body': this.message, // set this to the encrypted message
+        'receiver_encrypted': receiver_encrypted, // set this to the encrypted message
+        'sender_encrypted': sender_encrypted, // set this to the encrypted message
         'receiver': this.partner?.username,
         'sender': this.authService.credentials?.username
       })
@@ -86,6 +100,7 @@ export class ConversationComponent implements OnInit {
   }
 
   receiveMessage(message: string) {
+    console.log('Received A new Message')
     const componentRef = this.newMessageComponent();
     componentRef.instance.message = message;
     componentRef.instance.status = "received";
