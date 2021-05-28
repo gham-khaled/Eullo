@@ -71,7 +71,7 @@ export class ConversationComponent implements OnInit {
     if (this.message){
       //get private key from local storage
       //encrypt message
-
+      console.log(this.message)
       this.webSocketService.emit('message', {
         'body': this.message, // set this to the encrypted message
         'receiver': this.partner?.username,

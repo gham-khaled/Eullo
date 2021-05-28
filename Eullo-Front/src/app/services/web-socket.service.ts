@@ -17,7 +17,7 @@ export class WebSocketService {
     console.log("Before Connection")
     let connection_infos = this.authService.credentials
     // @ts-ignore
-    this.socket = io(environment.BASE_URL, {query: `username=${connection_infos?.username}`}, {'multiplex': false}); //add  {query: `username=${connection_infos?.username}`, }
+    this.socket = io(environment.BASE_URL, {query: `username=${connection_infos?.username}?certificate=${connection_infos?.certificate}`}, {'multiplex': false}); //add  {query: `username=${connection_infos?.username}`, }
 
   }
 

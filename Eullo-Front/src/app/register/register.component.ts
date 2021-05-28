@@ -63,12 +63,12 @@ export class RegisterComponent implements OnInit {
 
   // @ts-ignore
   generateEncryptedPrivateKeyPEM(privateKey, password:string) {
-    return   pki.encryptRsaPrivateKey(privateKey, password);
+    return  pki.encryptRsaPrivateKey(privateKey, password);
   }
 
   async register() {
     const keyPair = this.generateKeyPair();
-    const certificateRequest = this.generateCertificateRequestPEM(keyPair,this.registerForm.get('username')?.value);
+    const certificate = this.generateCertificateRequestPEM(keyPair,this.registerForm.get('username')?.value);
     const encryptedPrivateKey = this.generateEncryptedPrivateKeyPEM(keyPair.privateKey, this.registerForm.get('password')?.value);
 
     this.isLoading = true;
@@ -77,14 +77,20 @@ export class RegisterComponent implements OnInit {
     const user = {
       ...this.registerForm.value,
       encryptedPrivateKey,
-      certificateRequest
+      certificateRequest: certificate
     }
     await this.authService.register(user)
       .then(data => {
         this.isLoading = false;
+        localStorage.setItem('priv_key',pki.privateKeyToPem(keyPair.privateKey));
+        localStorage.setItem('pub_key',pki.publicKeyToPem(keyPair.publicKey));
+        localStorage.setItem('certif',data);
+        // data contains certificate
+        //user.certificate = data.certificate
+        // save certificate and private key to local storage ;
+        console.log(data)
         this.router.navigate(['/login']).then(() => {
           console.log('Register successful: Redirecting...');
-          console.clear();
         });
       })
       .catch(error => {
