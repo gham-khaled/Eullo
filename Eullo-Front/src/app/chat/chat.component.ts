@@ -28,6 +28,7 @@ export class ChatComponent implements OnInit {
     // @ts-ignore
     this.webSocketService.listen('message').subscribe((message: Message) => {
       const {sender, receiver, body} = message
+      console.log(message);
       if (this.selectedUser?.username == sender)
         this.activeConversation?.receiveMessage(body);
       this.updateChatList(sender, body)

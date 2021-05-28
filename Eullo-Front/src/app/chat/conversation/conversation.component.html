@@ -1,4 +1,4 @@
-<div class="conversation-container" *ngIf="!conversation">
+<div class="conversation-container" *ngIf="!partner?.username">
   <div class="search-container">
     <mat-card class="search">
       <mat-card-header>
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="conversation-container" *ngIf="conversation && partner">
+<div class="conversation-container" *ngIf="conversation && partner.username">
   <div class="user-container">
     <mat-card class="user">
       <mat-card-header>

@@ -2,14 +2,12 @@ import {
   Component,
   ComponentFactoryResolver,
   EventEmitter,
-  Input,
   OnInit,
   Output,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
 import {WebSocketService} from "../../services/web-socket.service";
-import {Status} from "./message/status.enum";
 import {MessageComponent} from "./message/message.component";
 import {UserItem} from "../../models/user-item.interface";
 import {AuthService} from "../../services/authentication/auth.service";
@@ -34,7 +32,7 @@ export class ConversationComponent implements OnInit {
 
   conversation: Observable<Message[]> | undefined;
 
-  partner: UserItem | undefined
+  partner: UserItem | undefined;
 
   @ViewChild('messagesContainer', {read: ViewContainerRef})
   entry: ViewContainerRef | undefined;
@@ -51,8 +49,10 @@ export class ConversationComponent implements OnInit {
     this.conversation = this.chatService.conversation;
     this.chatService.partner.subscribe(
       data => {
-        this.chatService.loadConversation(data.username);
         this.partner = data;
+        if (data.username && data.lastReceivedMessage) {
+          this.chatService.loadConversation(data.username);
+        }
       }
     )
   }
@@ -74,7 +74,7 @@ export class ConversationComponent implements OnInit {
 
       this.webSocketService.emit('message', {
         'body': this.message, // set this to the encrypted message
-        'receiver': this.partner,
+        'receiver': this.partner?.username,
         'sender': this.authService.credentials?.username
       })
       const componentRef = this.newMessageComponent();

@@ -23,7 +23,11 @@ export class ChatListComponent implements OnInit {
   }
 
   showUser(user: UserItem) {
-    if (user)
+    if (!user) {
+      console.log('here')
+      this.chatService.setPartner({connected: false, lastReceivedMessage: "", username: ""});
+    }
+    else
       this.chatService.setPartner(user);
   }
 }

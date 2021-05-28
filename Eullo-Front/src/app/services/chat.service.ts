@@ -49,10 +49,8 @@ export class ChatService {
 
   private _partner = new BehaviorSubject<UserItem>({connected: false, lastReceivedMessage: "", username: ""});
   readonly partner = this._partner.asObservable();
-  setPartner(partner: UserItem | null) {
-    if (partner != null) {
+  setPartner(partner: UserItem) {
       this._partner.next(partner);
-    }
   }
 
   private _conversation = new BehaviorSubject<Message[]>([{message: "", status: ""}]);
