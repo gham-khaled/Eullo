@@ -19,6 +19,7 @@ import * as forge from "node-forge";
 
 const pki = forge.pki
 const rsa = pki.rsa;
+
 @Component({
   selector: 'app-conversation',
   templateUrl: './conversation.component.html',
@@ -29,6 +30,7 @@ export class ConversationComponent implements OnInit {
   message: string = "";
 
   users: Observable<UserItem[]> | undefined
+  allUsers: Observable<UserItem[]> | undefined
 
   @Output()
   newMessage = new EventEmitter<string>();
@@ -48,7 +50,10 @@ export class ConversationComponent implements OnInit {
 
   ngOnInit(): void {
     this.users = this.chatService.users;
+
+    this.allUsers = this.chatService.allUser;
     this.chatService.loadUsersItems();
+    this.chatService.loadAllUsers();
     this.conversation = this.chatService.conversation;
     this.chatService.partner.subscribe(
       data => {
@@ -61,6 +66,7 @@ export class ConversationComponent implements OnInit {
   }
 
   setPartner(partner: UserItem) {
+    console.log('Setting partner ', partner)
     this.chatService.setPartner(partner);
   }
 
@@ -71,26 +77,33 @@ export class ConversationComponent implements OnInit {
   }
 
   sendMessage() {
-    if (this.message){
+    if (this.message) {
       //get private key from local storage
       //encrypt message
-      console.log(this.message)
       const partner_certificate = localStorage.getItem('partner')
       const public_key_pem = localStorage.getItem('pub_key')
+      const private_key_pem = localStorage.getItem('priv_key')
       // @ts-ignore
       const certif = pki.certificateFromPem(partner_certificate)
       // @ts-ignore
       const pub_key = pki.publicKeyFromPem(public_key_pem)
       // @ts-ignore
+      const private_key = pki.privateKeyFromPem(private_key_pem)
+      console.log("Encrypted message ", pub_key.encrypt(this.message))
+      console.log("Type of Encrypted message ", typeof (pub_key.encrypt(this.message)))
+      // @ts-ignore
       const receiver_encrypted = certif.publicKey.encrypt(this.message)
       const sender_encrypted = pub_key.encrypt(this.message)
+      const clear_message = private_key.decrypt(sender_encrypted)
+      console.log('Clear Message after decryption ',clear_message)
 
-      this.webSocketService.emit('message', {
+
+      this.webSocketService.emit('message', JSON.stringify({
         'receiver_encrypted': receiver_encrypted, // set this to the encrypted message
         'sender_encrypted': sender_encrypted, // set this to the encrypted message
         'receiver': this.partner?.username,
         'sender': this.authService.credentials?.username
-      })
+      }))
       const componentRef = this.newMessageComponent();
       componentRef.instance.message = this.message;
       componentRef.instance.status = "sent";

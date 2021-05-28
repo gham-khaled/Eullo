@@ -29,7 +29,6 @@ export class ChatListComponent implements OnInit {
     }
     else{
       this.chatService.setPartner(user);
-
     }
 
   }

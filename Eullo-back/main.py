@@ -1,3 +1,4 @@
+import base64
 import json
 from flask import Flask, request
 import flask.scaffold
@@ -17,6 +18,7 @@ import pymysql
 app = Flask(__name__)
 
 api = Api(app)
+
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins='*')
 
@@ -30,7 +32,7 @@ conn = pymysql.connect(
     password='douda123',
     db='eullo',
     cursorclass=pymysql.cursors.DictCursor,
-    autocommit=True
+    autocommit=True,
 
 )
 
@@ -57,8 +59,12 @@ class Message(Resource):
         cur.execute(
             f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" AND user2 = "{partner}") OR (user1 = "{partner}" AND user2 = "{username}")')
         conversation = cur.fetchall()
-        partner_infos= ldapFunctions.get_user(username)
-        return {"conversation": conversation, "certificate": partner_infos['certificate']}
+        for message in conversation:
+            message['encrypted_sender'] =    message['encrypted_sender']
+            message['encrypted_receiver'] = message['encrypted_receiver']
+        partner_infos = ldapFunctions.get_user(username)
+        print(conversation)
+        return json.dumps({"conversation": conversation, "certificate": partner_infos['certificate']})
 
 
 class User(Resource):
@@ -67,8 +73,7 @@ class User(Resource):
 
     def post(self):
         user = request.get_json()
-        print(user)
-        # return ldapFunctions.add_user(user)
+        return ldapFunctions.add_user(user)
     ######### LDAP
 
 
@@ -99,30 +104,26 @@ class Auth(Resource):
 
 
 @socketio.on('message')
-def send_message(message):
-    print(message)
+def send_message(msg):
+    message = json.loads(msg)
     receiver = message['receiver']
     sender = message['sender']
-    sender_encrypted = message['sender_encrypted']
-    receiver_encrypted = message['receiver_encrypted']
+    sender_encrypted = (message['sender_encrypted'])
+    receiver_encrypted = (message['receiver_encrypted'])
     cur = conn.cursor()
     cur.execute("INSERT INTO conversation (user1,user2,msg1,msg2) VALUES (%s, %s, %s, %s)",
                 (sender, receiver, sender_encrypted, receiver_encrypted))
     conn.commit()
-    print(connected_users)
     if receiver in connected_users:
         send(message, broadcast=True, room=connected_users[receiver])
 
 
 @socketio.on('connect')
 def add_connection():
-    print("")
     current_socket_id = request.sid
     username = request.args.get('username')
     certificate = request.args.get('certificate')
-    print(certificate)
     connected_users[username] = current_socket_id
-    print(connected_users)
 
 
 @socketio.on('disconnect')

@@ -7,6 +7,7 @@ import {AuthService} from "./authentication/auth.service";
 import {map} from "rxjs/operators";
 import {Message} from "../models/message.interface";
 import * as forge from "node-forge";
+import {logger} from "codelyzer/util/logger";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -21,6 +22,7 @@ export class ChatService {
 
   private dataStore = {
     users: [],
+    allUsers: [],
     conversation: []
   }
 
@@ -31,7 +33,21 @@ export class ChatService {
     {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
     {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
   ]);
+  private _allUsers = new BehaviorSubject<UserItem[]>([]);
   readonly users = this._users.asObservable();
+  readonly allUser = this._allUsers.asObservable();
+
+  loadAllUsers() {
+    this.http.get(`${environment.BASE_URL}/users`).subscribe(
+      data => {
+        console.log(data)
+        // @ts-ignore
+        this.dataStore.allUsers = data;
+        this._allUsers.next(Object.assign({}, this.dataStore).allUsers);
+      }, error => console.error("Couldn't load users")
+    );
+
+  }
 
   loadUsersItems() {
     this.http.get(`${environment.BASE_URL}/messages/${this._currentUsername}`)
@@ -66,17 +82,25 @@ export class ChatService {
   readonly conversation = this._conversation.asObservable();
 
   loadConversation(partner: string) {
+
     // @ts-ignore
-    const private_key = pki.privateKeyFromPem(localStorage.getItem('priv_key'))
+    const private_key_pem = localStorage.getItem('priv_key')
+    // @ts-ignore
+    const private_key = pki.privateKeyFromPem(private_key_pem)
     let params = new HttpParams().set('partner', partner);
     this.http.get(`${environment.BASE_URL}/message/${this._currentUsername}`, {params: params})
       .pipe(
-
         map(data => {
-          console.log("In items")
           // @ts-ignore
+          data = JSON.parse(data)
+          console.log("In Loading conversation ", data)
+          // @ts-ignore
+          data.conversation.forEach(item => console.log(item.sender === this._currentUsername));
+          // @ts-ignore
+
           const messages = data.conversation.map(message => ({
             message: message.sender === this._currentUsername ? private_key.decrypt(message.encrypted_sender) : private_key.decrypt(message.encrypted_receiver), // set the decrypted message here // figure out how to ge the public key of the other person
+            // message: message.sender === this._currentUsername ? message.encrypted_sender : message.encrypted_receiver, // set the decrypted message here // figure out how to ge the public key of the other person
             status: message.sender === this._currentUsername ? "sent" : "received"
           }));
           // @ts-ignore
@@ -89,7 +113,7 @@ export class ChatService {
         this.dataStore.conversation = data.conversation
         localStorage.setItem('partner', data.certificate)   // @ts-ignore
         this._conversation.next(Object.assign({}, this.dataStore).conversation);
-      }, error => console.error(`Couldn't log conversation with partner: ${partner}`))
+      }, error => console.error(`Couldn't log conversation with partner: ${partner} ${error}`))
   }
 
 

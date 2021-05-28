@@ -3,6 +3,11 @@ import {WebSocketService} from "../services/web-socket.service";
 import {UserItem} from "../models/user-item.interface";
 import {ConversationComponent} from "./conversation/conversation.component";
 import {ChatService} from "../services/chat.service";
+import * as forge from "node-forge";
+import {AuthService} from "../services/authentication/auth.service";
+
+const pki = forge.pki
+const rsa = pki.rsa;
 
 @Component({
   selector: 'app-chat',
@@ -13,10 +18,10 @@ export class ChatComponent implements OnInit {
   @ViewChild(ConversationComponent) activeConversation: ConversationComponent | undefined;
 
   users: UserItem[] | undefined;
-  selectedUser: UserItem | undefined ;
+  selectedUser: UserItem | undefined;
 
 
-  constructor(private webSocketService: WebSocketService, private chatService: ChatService) {
+  constructor(private webSocketService: WebSocketService, private chatService: ChatService, private authService : AuthService) {
   }
 
   ngOnInit(): void {
@@ -25,16 +30,24 @@ export class ChatComponent implements OnInit {
       {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
       {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
     ]
-    this.chatService.partner.subscribe( data => this.selectedUser = data)
+    this.chatService.partner.subscribe(data => this.selectedUser = data)
+
+    const private_key_pem = localStorage.getItem('priv_key')
+    // @ts-ignore
+    const private_key = pki.privateKeyFromPem(private_key_pem)
 
     // @ts-ignore
-    this.webSocketService.listen('message').subscribe((message: Message) => {
+    this.webSocketService.listen('message').subscribe((message: any) => {
       console.log(message);
-      const {sender, receiver, body} = message
-      console.log(this.selectedUser);
-      if (this.selectedUser?.username == sender)
+      console.log(typeof (message));
+      // message = JSON.parse(message)
+      // @ts-ignore
+      let body = message.sender === this.authService.credentials?.username ? message.sender_encrypted : message.receiver_encrypted
+      body = private_key.decrypt(body)
+      console.log('Decrypted Message ', body)
+      if (this.selectedUser?.username == message.sender)
         this.activeConversation?.receiveMessage(body);
-      this.updateChatList(sender, body)
+      this.updateChatList(message.sender, body)
     })
   }
 
