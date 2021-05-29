@@ -80,7 +80,6 @@ export class ConversationComponent implements OnInit {
       let sender_encrypted: string = "";
       if (partner_certificate) {
         receiver_encrypted = this.cryptoService.encrypt(this.message, partner_certificate);
-        console.log(receiver_encrypted)
       }
       if (user)
         sender_encrypted = this.cryptoService.encrypt(this.message, user?.certificate);

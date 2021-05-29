@@ -22,7 +22,7 @@ export class ChatListComponent implements OnInit {
     this.chatListService.loadChatItems();
   }
 
-  showUser(partner: ChatItem) {
+  showUser(partner: ChatItem|null) {
     if (!partner) {
       this.conversationService.setPartner({connected: false, lastReceivedMessage: "", username: ""});
     }
