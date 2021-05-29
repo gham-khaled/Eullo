@@ -48,10 +48,12 @@ export class AuthService {
   }
 
   logout() {
-    const user: User = this.credentials;
+    const user: User | null | undefined = this.credentials;
     this._credentials = null;
-    const encryptedPrivateKey = user.encryptedPrivateKey;
+    const encryptedPrivateKey = user?.encryptedPrivateKey;
     localStorage.removeItem('user');
-    localStorage.setItem(`${user.username}-encryptedPrivateKey`,encryptedPrivateKey);
+    // @ts-ignore
+    localStorage.setItem(`${user?.username}-encryptedPrivateKey`, encryptedPrivateKey);
+
   }
 }

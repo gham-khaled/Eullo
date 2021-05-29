@@ -5,14 +5,15 @@ import {BehaviorSubject} from "rxjs";
 import {ChatItem} from "../models/user.model";
 import {Message} from "../models/message.model";
 import {environment} from "../../../environments/environment";
-import {filter, map} from "rxjs/operators";
+import {map} from "rxjs/operators";
+import {CryptoService} from "./crypto.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConversationService {
   private _currentUsername: string | undefined;
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private cryptoService: CryptoService) {
     this._currentUsername = this.authService.credentials?.username;
   }
 
@@ -33,15 +34,16 @@ export class ConversationService {
     this.http.get<{conversation: [any], certificate: string}>(`${environment.BASE_URL}/message/${this._currentUsername}`, {params: params})
       .pipe(
         map(data => {
+          // @ts-ignore
+          data = JSON.parse(data);
           const messages = data.conversation.map(message => ({
-            message: message.sender === this._currentUsername ? message.encrypted_sender : message.encrypted_receiver, // set the decrypted message here // figure out how to ge the public key of the other person
+            message: message.sender === this._currentUsername ? this.cryptoService.decrypt(message.encrypted_sender) : this.cryptoService.decrypt(message.encrypted_receiver),
             status: message.sender === this._currentUsername ? "sent" : "received"
           }));
           return {'conversation': messages, 'certificate': data.certificate}
         })
       )
       .subscribe(data => {
-        console.log(data);
         localStorage.setItem('partner', data.certificate)
         this._conversation.next(data.conversation);
       }, error => console.error(`Couldn't log conversation with partner: ${partner} ${error.message}`))
@@ -55,8 +57,6 @@ export class ConversationService {
       .pipe(map(data => data.filter(item => item.username !== this._currentUsername)))
       .subscribe(
       data => {
-        console.log('Loading all users ...');
-        console.log(data)
         this._allUsers.next(data);
       },
         error => console.error(`Couldn't load users: ${error.message}`)

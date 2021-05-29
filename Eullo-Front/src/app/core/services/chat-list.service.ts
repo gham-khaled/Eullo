@@ -42,10 +42,9 @@ export class ChatListService {
         }))
       .subscribe(
         data => {
-          console.log(data)
           // @ts-ignore
           this._chatItems.next(data);
-        }, error => console.error("Couldn't load users")
+        }, error => console.error(`Couldn't load users: ${error.message}`)
       );
   }
 }

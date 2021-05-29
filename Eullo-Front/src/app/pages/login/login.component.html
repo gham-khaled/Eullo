@@ -12,7 +12,7 @@
             <mat-label>Username</mat-label>
             <input matInput formControlName="username" required>
             <mat-error *ngIf="error">
-              <strong>{{error}}</strong>
+              <strong>Wrong credentials</strong>
             </mat-error>
           </mat-form-field>
         </div>
@@ -21,7 +21,7 @@
             <mat-label>Password</mat-label>
             <input matInput type="password" formControlName="password" required>
             <mat-error *ngIf="error">
-              <strong>{{error}}</strong>
+              <strong>Wrong credentials</strong>
             </mat-error>
           </mat-form-field>
         </div>

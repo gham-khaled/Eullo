@@ -42,6 +42,8 @@ export class LoginComponent implements OnInit {
       .then((data: User) => {
         this.cryptoService.certificate = data.certificate;
         data.encryptedPrivateKey = encryptedPrivateKey;
+        // @ts-ignore
+        this.cryptoService.setPrivateKeyFromEncryptedKey(encryptedPrivateKey, this.loginForm.get('password')?.value);
         localStorage.setItem('user', JSON.stringify(data));
         this.authService.credentials = data;
         this.router.navigate(['/']).then(() => {
@@ -51,6 +53,7 @@ export class LoginComponent implements OnInit {
       })
       .catch(error => {
         this.error = "Wrong credentials";
+        console.log(this.error);
         this.isLoading = false;
         this.loginForm.enable();
         this.loginForm.get('password')?.reset();

@@ -16,7 +16,7 @@ export class CryptoService {
   private _certificate;
 
   constructor(private authService: AuthService) {
-    const user: User = this.authService.credentials;
+    const user: User | null | undefined = this.authService.credentials;
     if (user) {
       this._certificate = pki.certificateFromPem(user.certificate);
       this._publicKey = this._certificate.publicKey;
@@ -24,16 +24,13 @@ export class CryptoService {
     }
   }
 
-  set privateKey(privateKeyPem: string) {
-    this._privateKey = pki.privateKeyFromPem(privateKeyPem);
+  // @ts-ignore
+  setPrivateKeyFromEncryptedKey(encryptedPrivateKeyPem: string, password: string) {
+    this._privateKey = pki.decryptRsaPrivateKey(encryptedPrivateKeyPem,password);
   }
 
   set certificate(certificatePem: string) {
     this._certificate = pki.certificateFromPem(certificatePem);
-  }
-
-  get certificate() {
-    return this._certificate;
   }
 
   generateCertificateRequestAndEncryptedPrivateKeyPEM(username: string, password: string) {
@@ -72,11 +69,13 @@ export class CryptoService {
   encrypt(message: string, partnerCertificate: string) {
     const certificate = pki.certificateFromPem(partnerCertificate);
     const publicKey = certificate.publicKey;
-    return publicKey.encrypt(message);
+    // @ts-ignore
+    return forge.util.encode64(publicKey.encrypt(message));
   }
-
 
   decrypt(encryptedMessage: string) {
-    return this._privateKey.decrypt(encryptedMessage);
+    // @ts-ignore
+    return this._privateKey.decrypt(forge.util.decode64(encryptedMessage));
   }
+
 }

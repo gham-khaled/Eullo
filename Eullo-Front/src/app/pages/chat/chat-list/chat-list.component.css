@@ -17,11 +17,10 @@
 
 .chat-items::-webkit-scrollbar {
   width: 8px; /* width of the entire scrollbar */
-  background: transparent;
 }
 
 .chat-items::-webkit-scrollbar-track {
-  background: #f5f5f5;       /* color of the tracking area */
+  background: white;       /* color of the tracking area */
 }
 
 .chat-items::-webkit-scrollbar-thumb {
