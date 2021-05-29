@@ -52,10 +52,11 @@ export class ConversationService {
   loadAllUsers() {
     this.http.get<ChatItem[]>(`${environment.BASE_URL}/users`)
       // @ts-ignore
-      .pipe(filter(data => data.username === this._currentUsername))
+      .pipe(map(data => data.filter(item => item.username !== this._currentUsername)))
       .subscribe(
       data => {
-        console.log(data);
+        console.log('Loading all users ...');
+        console.log(data)
         this._allUsers.next(data);
       },
         error => console.error(`Couldn't load users: ${error.message}`)
