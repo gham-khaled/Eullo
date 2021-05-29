@@ -7,14 +7,14 @@ import {
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
-import {WebSocketService} from "../../services/web-socket.service";
+import {WebSocketService} from "../../../services/web-socket.service";
 import {MessageComponent} from "./message/message.component";
-import {UserItem} from "../../models/user-item.interface";
-import {AuthService} from "../../services/authentication/auth.service";
-import {ChatService} from "../../services/chat.service";
+import {UserItem} from "../../../models/user-item.interface";
+import {AuthService} from "../../../services/authentication/auth.service";
+import {ChatService} from "../../../services/chat.service";
 import {Observable} from "rxjs";
-import {Message} from "../../models/message.interface";
-import {User} from "../../models/user.interface";
+import {Message} from "../../../models/message.interface";
+import {User} from "../../../models/user.interface";
 import * as forge from "node-forge";
 
 const pki = forge.pki

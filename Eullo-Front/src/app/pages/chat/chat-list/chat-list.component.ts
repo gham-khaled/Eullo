@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {WebSocketService} from "../../services/web-socket.service";
-import {UserItem} from "../../models/user-item.interface";
-import {ChatService} from "../../services/chat.service";
+import {WebSocketService} from "../../../services/web-socket.service";
+import {UserItem} from "../../../models/user-item.interface";
+import {ChatService} from "../../../services/chat.service";
 import {Observable} from "rxjs";
 
 

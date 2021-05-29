@@ -1,17 +1,16 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, of} from "rxjs";
-import {UserItem} from "../models/user-item.interface";
+import {UserItem} from "../../models/user-item.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {environment} from "../../environments/environment";
+import {environment} from "../../../environments/environment";
 import {AuthService} from "./authentication/auth.service";
 import {map} from "rxjs/operators";
-import {Message} from "../models/message.interface";
+import {Message} from "../../models/message.interface";
 import * as forge from "node-forge";
 import {logger} from "codelyzer/util/logger";
 
 const pki = forge.pki
 const rsa = pki.rsa;
-
 
 @Injectable({
   providedIn: 'root'
@@ -115,7 +114,5 @@ export class ChatService {
         this._conversation.next(Object.assign({}, this.dataStore).conversation);
       }, error => console.error(`Couldn't log conversation with partner: ${partner} ${error}`))
   }
-
-
   //function decrypt (encrypted message, key)
 }

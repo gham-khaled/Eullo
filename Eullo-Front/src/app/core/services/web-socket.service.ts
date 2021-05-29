@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 // @ts-ignore
 import * as io from "socket.io-client" ;
 import {Observable} from "rxjs";
-import {environment} from "../../environments/environment";
+import {environment} from "../../../environments/environment";
 import {AuthService} from "./authentication/auth.service";
 
 @Injectable({

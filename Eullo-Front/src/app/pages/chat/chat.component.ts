@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {WebSocketService} from "../services/web-socket.service";
-import {UserItem} from "../models/user-item.interface";
+import {WebSocketService} from "../../services/web-socket.service";
+import {UserItem} from "../../models/user-item.interface";
 import {ConversationComponent} from "./conversation/conversation.component";
-import {ChatService} from "../services/chat.service";
+import {ChatService} from "../../services/chat.service";
 import * as forge from "node-forge";
-import {AuthService} from "../services/authentication/auth.service";
+import {AuthService} from "../../services/authentication/auth.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
