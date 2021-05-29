@@ -60,7 +60,7 @@ class Message(Resource):
             f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" AND user2 = "{partner}") OR (user1 = "{partner}" AND user2 = "{username}")')
         conversation = cur.fetchall()
         for message in conversation:
-            message['encrypted_sender'] =    message['encrypted_sender']
+            message['encrypted_sender'] = message['encrypted_sender']
             message['encrypted_receiver'] = message['encrypted_receiver']
         partner_infos = ldapFunctions.get_user(username)
         print(conversation)

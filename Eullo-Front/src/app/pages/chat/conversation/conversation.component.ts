@@ -9,13 +9,14 @@ import {
 } from '@angular/core';
 import {WebSocketService} from "../../../core/services/web-socket.service";
 import {MessageComponent} from "./message/message.component";
-import {UserItem} from "../../../core/models/user-item.interface";
 import {AuthService} from "../../../core/services/auth.service";
-import {ChatService} from "../../../core/services/chat.service";
+import {ChatListService} from "../../../core/services/chat-list.service";
 import {Observable} from "rxjs";
-import {Message} from "../../../core/models/message.interface";
-import {User} from "../../../core/models/user.interface";
+import {Message} from "../../../core/models/message.model";
+import {ChatItem, User} from "../../../core/models/user.model";
 import * as forge from "node-forge";
+import {ConversationService} from "../../../core/services/conversation.service";
+import {CryptoService} from "../../../core/services/crypto.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -29,15 +30,14 @@ export class ConversationComponent implements OnInit {
 
   message: string = "";
 
-  users: Observable<UserItem[]> | undefined
-  allUsers: Observable<UserItem[]> | undefined
+  users: Observable<ChatItem[]> | undefined
+  allUsers: Observable<ChatItem[]> | undefined
 
   @Output()
   newMessage = new EventEmitter<string>();
 
   conversation: Observable<Message[]> | undefined;
-
-  partner: UserItem | undefined;
+  partner: ChatItem | undefined = {connected: false, lastReceivedMessage: "", username: ""};
 
   @ViewChild('messagesContainer', {read: ViewContainerRef})
   entry: ViewContainerRef | undefined;
@@ -45,29 +45,25 @@ export class ConversationComponent implements OnInit {
   constructor(private resolver: ComponentFactoryResolver,
               private webSocketService: WebSocketService,
               private authService: AuthService,
-              private chatService: ChatService) {
+              private cryptoService: CryptoService,
+              private conversationService: ConversationService) {
   }
 
   ngOnInit(): void {
-    this.users = this.chatService.users;
-
-    this.allUsers = this.chatService.allUser;
-    this.chatService.loadUsersItems();
-    this.chatService.loadAllUsers();
-    this.conversation = this.chatService.conversation;
-    this.chatService.partner.subscribe(
-      data => {
-        this.partner = data;
-        if (data.username && data.lastReceivedMessage) {
-          this.chatService.loadConversation(data.username);
-        }
+    this.conversation = this.conversationService.conversation;
+    this.conversationService.partner.subscribe(
+      partner => {
+        this.partner = partner;
+        if (!!partner.username)
+          this.conversationService.loadConversation(partner.username);
       }
     )
+    this.allUsers = this.conversationService.allUsers;
+    this.conversationService.loadAllUsers();
   }
 
-  setPartner(partner: UserItem) {
-    console.log('Setting partner ', partner)
-    this.chatService.setPartner(partner);
+  setPartner(partner: ChatItem) {
+    this.conversationService.setPartner(partner);
   }
 
   newMessageComponent() {
@@ -78,37 +74,30 @@ export class ConversationComponent implements OnInit {
 
   sendMessage() {
     if (this.message) {
-      //get private key from local storage
-      //encrypt message
+      const user = this.authService.credentials;
       const partner_certificate = localStorage.getItem('partner')
-      const public_key_pem = localStorage.getItem('pub_key')
-      const private_key_pem = localStorage.getItem('priv_key')
-      // @ts-ignore
-      const certif = pki.certificateFromPem(partner_certificate)
-      // @ts-ignore
-      const pub_key = pki.publicKeyFromPem(public_key_pem)
-      // @ts-ignore
-      const private_key = pki.privateKeyFromPem(private_key_pem)
-      console.log("Encrypted message ", pub_key.encrypt(this.message))
-      console.log("Type of Encrypted message ", typeof (pub_key.encrypt(this.message)))
-      // @ts-ignore
-      const receiver_encrypted = certif.publicKey.encrypt(this.message)
-      const sender_encrypted = pub_key.encrypt(this.message)
-      const clear_message = private_key.decrypt(sender_encrypted)
-      console.log('Clear Message after decryption ',clear_message)
+      let receiver_encrypted: string = "";
+      let sender_encrypted: string = "";
+      if (partner_certificate) {
+        receiver_encrypted = this.cryptoService.encrypt(this.message, partner_certificate);
+        console.log(receiver_encrypted)
+      }
+      if (user)
+        sender_encrypted = this.cryptoService.encrypt(this.message, user?.certificate);
 
-
-      this.webSocketService.emit('message', JSON.stringify({
-        'receiver_encrypted': receiver_encrypted, // set this to the encrypted message
-        'sender_encrypted': sender_encrypted, // set this to the encrypted message
-        'receiver': this.partner?.username,
-        'sender': this.authService.credentials?.username
-      }))
-      const componentRef = this.newMessageComponent();
-      componentRef.instance.message = this.message;
-      componentRef.instance.status = "sent";
-      this.newMessage.next(this.message);
-      this.message = "";
+      if (!!receiver_encrypted && !!sender_encrypted) {
+        this.webSocketService.emit('message', JSON.stringify({
+          'receiver_encrypted': receiver_encrypted,
+          'sender_encrypted': sender_encrypted,
+          'receiver': this.partner?.username,
+          'sender': this.authService.credentials?.username
+        }))
+        const componentRef = this.newMessageComponent();
+        componentRef.instance.message = this.message;
+        componentRef.instance.status = "sent";
+        this.newMessage.next(this.message);
+        this.message = "";
+      }
     }
   }
 

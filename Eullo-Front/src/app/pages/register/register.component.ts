@@ -3,7 +3,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {AuthService} from "../../core/services/auth.service";
 import {Router} from "@angular/router";
 import * as forge from "node-forge";
-import {User} from "../../core/models/user.interface";
+import {User} from "../../core/models/user.model";
 import {CryptoService} from "../../core/services/crypto.service";
 
 const pki = forge.pki

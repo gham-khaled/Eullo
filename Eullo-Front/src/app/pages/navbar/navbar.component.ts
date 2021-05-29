@@ -13,8 +13,6 @@ export class NavbarComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {
   }
 
-  panelOpenState: boolean = false;
-
   ngOnInit(): void {
     this.username = this.authService.credentials?.username
   }

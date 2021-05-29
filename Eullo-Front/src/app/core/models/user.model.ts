@@ -14,3 +14,9 @@ export interface RegisterRequest {
   cardNumber: string;
   certificateRequest: string;
 }
+
+export interface ChatItem {
+  username: string;
+  lastReceivedMessage: string;
+  connected: boolean;
+}

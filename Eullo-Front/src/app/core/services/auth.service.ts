@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {RegisterRequest, User} from "../models/user.interface";
+import {RegisterRequest, User} from "../models/user.model";
 import {environment} from "../../../environments/environment";
 
 
@@ -20,6 +20,10 @@ export class AuthService {
   }
 
   get credentials(): User | null | undefined {
+    const savedCredentials = localStorage.getItem('user');
+    if (savedCredentials) {
+      this._credentials = JSON.parse(savedCredentials);
+    }
     return this._credentials;
   }
 
@@ -44,8 +48,8 @@ export class AuthService {
   }
 
   logout() {
+    const user: User = this.credentials;
     this._credentials = null;
-    const user: User = JSON.parse(localStorage.getItem('user'));
     const encryptedPrivateKey = user.encryptedPrivateKey;
     localStorage.removeItem('user');
     localStorage.setItem(`${user.username}-encryptedPrivateKey`,encryptedPrivateKey);

@@ -1,0 +1,59 @@
+import {Injectable} from "@angular/core";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {AuthService} from "./auth.service";
+import {BehaviorSubject} from "rxjs";
+import {ChatItem} from "../models/user.model";
+import {Message} from "../models/message.model";
+import {environment} from "../../../environments/environment";
+import {map} from "rxjs/operators";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ConversationService {
+  private _currentUsername: string | undefined;
+  constructor(private http: HttpClient, private authService: AuthService) {
+    this._currentUsername = this.authService.credentials?.username;
+  }
+
+  private _partner = new BehaviorSubject<ChatItem>({connected: false, lastReceivedMessage: "", username: ""});
+  readonly partner = this._partner.asObservable();
+  setPartner(partner: ChatItem) {
+    if (!!partner.username)
+      this._partner.next(partner);
+  }
+
+  private _conversation = new BehaviorSubject<Message[]>([{message: "", status: ""}]);
+  readonly conversation = this._conversation.asObservable();
+
+  loadConversation(partner: string) {
+    let params = new HttpParams().set('partner', partner);
+    this.http.get<{conversation: [any], certificate: string}>(`${environment.BASE_URL}/message/${this._currentUsername}`, {params: params})
+      .pipe(
+        map(data => {
+          const messages = data.conversation.map(message => ({
+            message: message.sender === this._currentUsername ? message.encrypted_sender : message.encrypted_receiver, // set the decrypted message here // figure out how to ge the public key of the other person
+            status: message.sender === this._currentUsername ? "sent" : "received"
+          }));
+          return {'conversation': messages, 'certificate': data.certificate}
+        })
+      )
+      .subscribe(data => {
+        console.log(data);
+        localStorage.setItem('partner', data.certificate)
+        this._conversation.next(data.conversation);
+      }, error => console.error(`Couldn't log conversation with partner: ${partner} ${error.message}`))
+  }
+
+  private _allUsers = new BehaviorSubject<ChatItem[]>([]);
+  readonly allUsers = this._allUsers.asObservable();
+  loadAllUsers() {
+    this.http.get<ChatItem[]>(`${environment.BASE_URL}/users`).subscribe(
+      data => {
+        this._allUsers.next(data);
+      },
+        error => console.error(`Couldn't load users: ${error.message}`)
+    );
+
+  }
+}

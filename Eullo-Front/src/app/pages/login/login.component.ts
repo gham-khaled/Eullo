@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
 import {AuthService} from "../../core/services/auth.service";
 import {Router} from "@angular/router";
-import {User} from "../../core/models/user.interface";
+import {User} from "../../core/models/user.model";
 import {CryptoService} from "../../core/services/crypto.service";
 import {using} from "rxjs";
 

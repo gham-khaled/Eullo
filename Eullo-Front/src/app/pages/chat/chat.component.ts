@@ -1,10 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {WebSocketService} from "../../core/services/web-socket.service";
-import {UserItem} from "../../core/models/user-item.interface";
 import {ConversationComponent} from "./conversation/conversation.component";
-import {ChatService} from "../../core/services/chat.service";
+import {ChatListService} from "../../core/services/chat-list.service";
 import * as forge from "node-forge";
 import {AuthService} from "../../core/services/auth.service";
+import {ChatItem} from "../../core/models/user.model";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -17,11 +17,11 @@ const rsa = pki.rsa;
 export class ChatComponent implements OnInit {
   @ViewChild(ConversationComponent) activeConversation: ConversationComponent | undefined;
 
-  users: UserItem[] | undefined;
-  selectedUser: UserItem | undefined;
+  users: ChatItem[] | undefined;
+  selectedUser: ChatItem | undefined;
 
 
-  constructor(private webSocketService: WebSocketService, private chatService: ChatService, private authService : AuthService) {
+  constructor(private webSocketService: WebSocketService, private chatService: ChatListService, private authService : AuthService) {
   }
 
   ngOnInit(): void {
@@ -30,30 +30,26 @@ export class ChatComponent implements OnInit {
       {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
       {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
     ]
-    this.chatService.partner.subscribe(data => this.selectedUser = data)
-
-    const private_key_pem = localStorage.getItem('priv_key')
-    // @ts-ignore
-    const private_key = pki.privateKeyFromPem(private_key_pem)
-
-    // @ts-ignore
-    this.webSocketService.listen('message').subscribe((message: any) => {
-      console.log(message);
-      console.log(typeof (message));
-      // message = JSON.parse(message)
-      // @ts-ignore
-      let body = message.sender === this.authService.credentials?.username ? message.sender_encrypted : message.receiver_encrypted
-      body = private_key.decrypt(body)
-      console.log('Decrypted Message ', body)
-      if (this.selectedUser?.username == message.sender)
-        this.activeConversation?.receiveMessage(body);
-      this.updateChatList(message.sender, body)
-    })
+    // this.chatService.partner.subscribe(data => this.selectedUser = data)
+    //
+    // const private_key_pem = localStorage.getItem('priv_key')
+    // // @ts-ignore
+    // const private_key = pki.privateKeyFromPem(private_key_pem)
+    //
+    // // @ts-ignore
+    // this.webSocketService.listen('message').subscribe((message: any) => {
+    //   console.log(message);
+    //   console.log(typeof (message));
+    //   // message = JSON.parse(message)
+    //   // @ts-ignore
+    //   let body = message.sender === this.authService.credentials?.username ? message.sender_encrypted : message.receiver_encrypted
+    //   body = private_key.decrypt(body)
+    //   console.log('Decrypted Message ', body)
+    //   if (this.selectedUser?.username == message.sender)
+    //     this.activeConversation?.receiveMessage(body);
+    //   this.updateChatList(message.sender, body)
+    // })
   }
-
-  // updateConversation(user: UserItem) {
-  //   this.selectedUser = user
-  // }
 
   updateChatList(username: string | undefined, body: string) {
     // @ts-ignore
@@ -68,11 +64,5 @@ export class ChatComponent implements OnInit {
     }
   }
 
-}
-
-interface Message {
-  body: string;
-  sender: string;
-  receiver: string;
 }
 

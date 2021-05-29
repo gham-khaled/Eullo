@@ -1,8 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {WebSocketService} from "../../../core/services/web-socket.service";
-import {UserItem} from "../../../core/models/user-item.interface";
-import {ChatService} from "../../../core/services/chat.service";
+import {ChatListService} from "../../../core/services/chat-list.service";
 import {Observable} from "rxjs";
+import {ChatItem} from "../../../core/models/user.model";
+import {ConversationService} from "../../../core/services/conversation.service";
 
 
 @Component({
@@ -12,23 +12,22 @@ import {Observable} from "rxjs";
 })
 export class ChatListComponent implements OnInit {
 
-  users: Observable<UserItem[]> | undefined
+  chatItems: Observable<ChatItem[]> | undefined
 
-  constructor(private chatService: ChatService) {
+  constructor(private chatListService: ChatListService, private conversationService: ConversationService) {
   }
 
   ngOnInit(): void {
-    this.users = this.chatService.users;
-    this.chatService.loadUsersItems();
+    this.chatItems = this.chatListService.chatItems;
+    this.chatListService.loadChatItems();
   }
 
-  showUser(user: UserItem) {
-    if (!user) {
-      console.log('here')
-      this.chatService.setPartner({connected: false, lastReceivedMessage: "", username: ""});
+  showUser(partner: ChatItem) {
+    if (!partner) {
+      this.conversationService.setPartner({connected: false, lastReceivedMessage: "", username: ""});
     }
     else{
-      this.chatService.setPartner(user);
+      this.conversationService.setPartner(partner);
     }
 
   }

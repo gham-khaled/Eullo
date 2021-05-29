@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import * as forge from "node-forge";
-import {User} from "../models/user.interface";
+import {User} from "../models/user.model";
+import {AuthService} from "./auth.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -14,8 +15,8 @@ export class CryptoService {
   private _publicKey;
   private _certificate;
 
-  constructor() {
-    const user: User = JSON.parse(localStorage.getItem('user'));
+  constructor(private authService: AuthService) {
+    const user: User = this.authService.credentials;
     if (user) {
       this._certificate = pki.certificateFromPem(user.certificate);
       this._publicKey = this._certificate.publicKey;
@@ -66,5 +67,16 @@ export class CryptoService {
     if (this._privateKey)
       return  pki.encryptRsaPrivateKey(this._privateKey, password);
     return null;
+  }
+
+  encrypt(message: string, partnerCertificate: string) {
+    const certificate = pki.certificateFromPem(partnerCertificate);
+    const publicKey = certificate.publicKey;
+    return publicKey.encrypt(message);
+  }
+
+
+  decrypt(encryptedMessage: string) {
+    // return this._privateKey.decrypt(encryptedMessage);
   }
 }
