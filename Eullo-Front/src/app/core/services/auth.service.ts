@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {User} from "../models/user.interface";
+import {RegisterRequest, User} from "../models/user.interface";
 import {environment} from "../../../environments/environment";
 
 
@@ -27,17 +27,16 @@ export class AuthService {
     this._credentials = value;
   }
 
-  register(user: User): Promise<any> {
+  register(user: RegisterRequest): Promise<any> {
     return this.http.post(`${environment.BASE_URL}/auth`, user).toPromise();
   }
 
   async login(username: string, password: string) {
     let params = new HttpParams().set('username', username);
     params = params.append('password', password);
-    return this.http.get(`${environment.BASE_URL}/auth`, {params: params}).toPromise(); //uncomment this later
-    // this._credentials = JSON.stringify(user); // to remve later
-    // localStorage.setItem('user', this._credentials); // to remove later
-
+    return this.http
+      .get(`${environment.BASE_URL}/auth`, {params: params})
+      .toPromise();
   }
 
   isAuthenticated(): boolean {
@@ -46,6 +45,9 @@ export class AuthService {
 
   logout() {
     this._credentials = null;
+    const user: User = JSON.parse(localStorage.getItem('user'));
+    const encryptedPrivateKey = user.encryptedPrivateKey;
     localStorage.removeItem('user');
+    localStorage.setItem(`${user.username}-encryptedPrivateKey`,encryptedPrivateKey);
   }
 }

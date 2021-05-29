@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
-import {AuthService} from "../../services/authentication/auth.service";
+import {AuthService} from "../../core/services/auth.service";
 import {Router} from "@angular/router";
 import * as forge from "node-forge";
+import {User} from "../../core/models/user.interface";
+import {CryptoService} from "../../core/services/crypto.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -25,40 +27,14 @@ export class RegisterComponent implements OnInit {
   isLoading: boolean = false;
   error: string = "";
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
+  constructor(private fb: FormBuilder,
+              private authService: AuthService,
+              private router: Router,
+              private cryptoService: CryptoService) { }
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated())
       this.router.navigate(['/']);
-  }
-
-
-  generateKeyPair() {
-    return rsa.generateKeyPair(2048);
-  }
-
-  // @ts-ignore
-  generateCertificateRequestPEM(keyPair, username:string) {
-    const certificateRequest = pki.createCertificationRequest();
-    certificateRequest.publicKey = keyPair.publicKey;
-    certificateRequest.setSubject([{
-      name: 'commonName',
-      value: username
-    }, {
-      name: 'countryName',
-      value: 'TN'
-    }, {
-      name: 'localityName',
-      value: 'Tunis'
-    }, {
-      name: 'organizationName',
-      value: 'Eullo'
-    }, {
-      shortName: 'OU',
-      value: 'Test'
-    }]);
-    certificateRequest.sign(keyPair.privateKey);
-    return pki.certificationRequestToPem(certificateRequest);
   }
 
   // @ts-ignore
@@ -67,9 +43,7 @@ export class RegisterComponent implements OnInit {
   }
 
   async register() {
-    const keyPair = this.generateKeyPair();
-    const certificate = this.generateCertificateRequestPEM(keyPair,this.registerForm.get('username')?.value);
-    const encryptedPrivateKey = this.generateEncryptedPrivateKeyPEM(keyPair.privateKey, this.registerForm.get('password')?.value);
+    const { encryptedPrivateKey, certificateRequest} = this.cryptoService.generateCertificateRequestAndEncryptedPrivateKeyPEM(this.registerForm.get('username')?.value,this.registerForm.get('password')?.value);
 
     this.isLoading = true;
     this.registerForm.disable();
@@ -77,32 +51,28 @@ export class RegisterComponent implements OnInit {
     const user = {
       ...this.registerForm.value,
       encryptedPrivateKey,
-      certificateRequest: certificate
+      certificateRequest
     }
-    console.log(user)
+
     await this.authService.register(user)
-      .then(data => {
-        console.log(data)
-        this.isLoading = false;
-        localStorage.setItem('priv_key',pki.privateKeyToPem(keyPair.privateKey));
-        localStorage.setItem('pub_key',pki.publicKeyToPem(keyPair.publicKey));
-        localStorage.setItem('certif',data);
-        // data contains certificate
-        //user.certificate = data.certificate
-        // save certificate and private key to local storage ;
-        console.log(data)
-        this.router.navigate(['/login']).then(() => {
-          console.log('Register successful: Redirecting...');
+      .then(async data => {
+        await this.authService.login(user.username, user.password)
+          // @ts-ignore
+          .then((loginResponse: User) => {
+            this.cryptoService.certificate = loginResponse.certificate;
+            loginResponse.encryptedPrivateKey = this.cryptoService.generateEncryptedPrivateKey(user.password);
+            localStorage.setItem('user',JSON.stringify(loginResponse))
+            this.authService.credentials = loginResponse;
+            this.isLoading = false;
+          })
+          .catch(error => console.error(`An error has occurred: ${error}`))
+        this.router.navigate(['/']).then(() => {
+          console.log('Login successful: Redirecting...');
+          // console.clear();
         });
-        // this.router.navigate(['/login']).then(() => {
-        //   console.log('Register successful: Redirecting...');
-        //   console.clear();
-        // });
       })
       .catch(error => {
-        console.log(error);
-        this.error = "Username already existing";
-        console.log(this.error);
+        console.error(`An error has occurred: ${error}`);
         this.isLoading = false;
         this.registerForm.enable();
         this.registerForm.get('password')?.reset();

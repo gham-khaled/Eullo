@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators} from '@angular/forms';
-import {AuthService} from "../../services/authentication/auth.service";
+import {AuthService} from "../../core/services/auth.service";
 import {Router} from "@angular/router";
-import {User} from "../../models/user.interface";
+import {User} from "../../core/models/user.interface";
+import {CryptoService} from "../../core/services/crypto.service";
+import {using} from "rxjs";
 
 @Component({
   selector: 'app-login',
@@ -19,8 +21,10 @@ export class LoginComponent implements OnInit {
   isLoading: boolean = false;
   error: string = "";
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
-  }
+  constructor(private fb: FormBuilder,
+              private authService: AuthService,
+              private router: Router,
+              private cryptoService: CryptoService) {}
 
   ngOnInit(): void {
     if (this.authService.isAuthenticated())
@@ -28,16 +32,18 @@ export class LoginComponent implements OnInit {
     this.isLoading = false;
   }
 
+
   async login() {
-    console.log(`Login: ${this.loginForm.get('username')?.value} ${this.loginForm.get('password')?.value}`);
     this.isLoading = true;
     this.loginForm.disable();
-    console.log(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value)
+    const encryptedPrivateKey = localStorage.getItem(`${this.loginForm.get('username')?.value}-encryptedPrivateKey`);
     await this.authService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value)
-      .then(data => {
+      // @ts-ignore
+      .then((data: User) => {
+        this.cryptoService.certificate = data.certificate;
+        data.encryptedPrivateKey = encryptedPrivateKey;
         localStorage.setItem('user', JSON.stringify(data));
-        this.authService.credentials = <User> data;
-        //save certificate
+        this.authService.credentials = data;
         this.router.navigate(['/']).then(() => {
           console.log('Login successful: Redirecting...');
         });
