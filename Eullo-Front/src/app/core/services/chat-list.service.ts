@@ -19,6 +19,12 @@ export class ChatListService {
   private _chatItems = new BehaviorSubject<ChatItem[]>([
     {username: "douda", lastReceivedMessage: "Ouech", connected: true},
     {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
+    {username: "sa", lastReceivedMessage: "Aa saa", connected: true},
+    {username: "douda", lastReceivedMessage: "Ouech", connected: true},
+    {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
+    {username: "sa", lastReceivedMessage: "Aa saa", connected: true},
+    {username: "douda", lastReceivedMessage: "Ouech", connected: true},
+    {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
     {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
   ]);
   readonly chatItems = this._chatItems.asObservable();

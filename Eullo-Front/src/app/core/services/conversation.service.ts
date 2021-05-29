@@ -19,11 +19,14 @@ export class ConversationService {
   private _partner = new BehaviorSubject<ChatItem>({connected: false, lastReceivedMessage: "", username: ""});
   readonly partner = this._partner.asObservable();
   setPartner(partner: ChatItem) {
-    if (!!partner.username)
       this._partner.next(partner);
   }
 
-  private _conversation = new BehaviorSubject<Message[]>([{message: "", status: ""}]);
+  private _conversation = new BehaviorSubject<Message[]>([
+    {message: "Message 1", status: "sent"},
+    {message: "Message 2", status: "sent"},
+    {message: "Message 3", status: "received"}
+  ]);
   readonly conversation = this._conversation.asObservable();
   loadConversation(partner: string) {
     let params = new HttpParams().set('partner', partner);

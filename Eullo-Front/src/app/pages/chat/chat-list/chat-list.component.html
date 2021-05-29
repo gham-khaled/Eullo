@@ -1,14 +1,12 @@
 <div class="chat-list">
-  <mat-card class="new-message" (click)="showUser(null)">
-    <mat-card-header>
+  <div class="new-message" (click)="showUser(null)">
       <div class="card-header">
         <div class="material-icons">add_circle_outline</div>
         <div class="card-title">
-          <mat-card-title>Send a Message</mat-card-title>
+          <div>Send a Message</div>
         </div>
       </div>
-    </mat-card-header>
-  </mat-card>
+  </div>
   <div class="chat-items">
     <app-chat-item *ngFor="let item of chatItems |async" [user]="item" (click)="showUser(item)"></app-chat-item>
   </div>

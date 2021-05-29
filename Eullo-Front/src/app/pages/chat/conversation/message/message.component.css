@@ -8,6 +8,7 @@
   align-self: flex-end;
   max-width: 50%;
   margin-right: 1%;
+  border-radius: 30px;
 }
 
 .received{
@@ -15,4 +16,6 @@
   max-width: 50%;
   background: #f3c9b3;
   margin-left: 1%;
+  border-radius: 30px;
+
 }
