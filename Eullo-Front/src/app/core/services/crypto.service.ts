@@ -77,6 +77,6 @@ export class CryptoService {
 
 
   decrypt(encryptedMessage: string) {
-    // return this._privateKey.decrypt(encryptedMessage);
+    return this._privateKey.decrypt(encryptedMessage);
   }
 }

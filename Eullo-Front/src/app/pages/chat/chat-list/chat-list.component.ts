@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ChatListService} from "../../../core/services/chat-list.service";
 import {Observable} from "rxjs";
 import {ChatItem} from "../../../core/models/user.model";

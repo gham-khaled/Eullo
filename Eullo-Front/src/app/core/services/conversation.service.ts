@@ -5,7 +5,7 @@ import {BehaviorSubject} from "rxjs";
 import {ChatItem} from "../models/user.model";
 import {Message} from "../models/message.model";
 import {environment} from "../../../environments/environment";
-import {map} from "rxjs/operators";
+import {filter, map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,6 @@ export class ConversationService {
 
   private _conversation = new BehaviorSubject<Message[]>([{message: "", status: ""}]);
   readonly conversation = this._conversation.asObservable();
-
   loadConversation(partner: string) {
     let params = new HttpParams().set('partner', partner);
     this.http.get<{conversation: [any], certificate: string}>(`${environment.BASE_URL}/message/${this._currentUsername}`, {params: params})
@@ -48,8 +47,12 @@ export class ConversationService {
   private _allUsers = new BehaviorSubject<ChatItem[]>([]);
   readonly allUsers = this._allUsers.asObservable();
   loadAllUsers() {
-    this.http.get<ChatItem[]>(`${environment.BASE_URL}/users`).subscribe(
+    this.http.get<ChatItem[]>(`${environment.BASE_URL}/users`)
+      // @ts-ignore
+      .pipe(filter(data => data.username === this._currentUsername))
+      .subscribe(
       data => {
+        console.log(data);
         this._allUsers.next(data);
       },
         error => console.error(`Couldn't load users: ${error.message}`)
