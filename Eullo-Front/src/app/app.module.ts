@@ -27,6 +27,9 @@ import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatBadgeModule} from '@angular/material/badge';
 import {MatSelectModule} from '@angular/material/select';
 import {MatOptionModule} from "@angular/material/core";
+import {AuthService} from "./core/services/auth.service";
+import {CryptoService} from "./core/services/crypto.service";
+import {ChatListService} from "./core/services/chat-list.service";
 
 
 @NgModule({
@@ -62,7 +65,14 @@ import {MatOptionModule} from "@angular/material/core";
     MatSelectModule,
     MatOptionModule
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    AuthService,
+    CryptoService,
+    ChatListService
+
+  ],
+  bootstrap: [AppComponent ]
 })
-export class AppModule { }
+export class AppModule {
+
+}

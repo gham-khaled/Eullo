@@ -1,5 +1,7 @@
 import base64
 import json
+
+import yaml
 from flask import Flask, request
 import flask.scaffold
 
@@ -33,6 +35,8 @@ conn = pymysql.connect(
     db='eullo',
     cursorclass=pymysql.cursors.DictCursor,
     autocommit=True,
+    use_unicode=True,
+    charset='utf8'
 
 )
 
@@ -40,8 +44,11 @@ conn = pymysql.connect(
 class Messages(Resource):
     def get(self, username):
         cur = conn.cursor()
-        cur.execute(
-            f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" OR user2 = "{username}") GROUP BY  least(user1, user2), greatest(user1, user2)')
+        query = """
+        SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation
+        WHERE (user1 = %s OR user2 = %s) GROUP BY  least(user1, user2), greatest(user1, user2)
+                  """
+        cur.execute(query, (username, username))
         conversations = cur.fetchall()
         for conversation in conversations:
             partner = conversation['sender'] if conversation['sender'] != username else conversation['receiver']
@@ -56,14 +63,13 @@ class Message(Resource):
     def get(self, username):
         cur = conn.cursor()
         partner = request.args.get('partner')
-        cur.execute(
-            f' SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation   WHERE (user1 = "{username}" AND user2 = "{partner}") OR (user1 = "{partner}" AND user2 = "{username}")')
+        query = """
+        SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation
+        WHERE (user1 = %s AND user2 = %s) OR (user1 = %s AND user2 = %s)
+        """
+        cur.execute(query, (username, partner, partner, username))
         conversation = cur.fetchall()
-        for message in conversation:
-            message['encrypted_sender'] = message['encrypted_sender']
-            message['encrypted_receiver'] = message['encrypted_receiver']
-        partner_infos = ldapFunctions.get_user(username)
-        print(conversation)
+        partner_infos = ldapFunctions.get_user(partner)
         return json.dumps({"conversation": conversation, "certificate": partner_infos['certificate']})
 
 
@@ -111,8 +117,11 @@ def send_message(msg):
     sender_encrypted = (message['sender_encrypted'])
     receiver_encrypted = (message['receiver_encrypted'])
     cur = conn.cursor()
-    cur.execute("INSERT INTO conversation (user1,user2,msg1,msg2) VALUES (%s, %s, %s, %s)",
-                (sender, receiver, sender_encrypted, receiver_encrypted))
+    query = """
+        INSERT INTO conversation (user1,user2,msg1,msg2) 
+        VALUES (%s, %s, %s, %s)
+    """
+    cur.execute(query, (sender, receiver, sender_encrypted, receiver_encrypted))
     conn.commit()
     if receiver in connected_users:
         send(message, broadcast=True, room=connected_users[receiver])
@@ -133,24 +142,6 @@ def remove_connection():
 
 
 connected_users = {}
-
-
-@socketio.on('custom_connect')
-def broadcast_connect(msg):
-    message = json.loads(msg)
-    print(message['sn'] + " connected")
-    connected_users["connected_users"].append({'sn': message['sn']})
-    print(connected_users)
-    emit('broadcast_connect', connected_users, broadcast=True)
-
-
-@socketio.on('custom_disconnect')
-def broadcast_disconnect(msg):
-    message = json.loads(msg)
-    print(message['sn'] + " disconnected")
-    # connected_users["connected_users"].pop(connected_users["connected_users"].index(message))
-    emit('broadcast_disconnect', connected_users, broadcast=True)
-
 
 api.add_resource(User, '/user/<username>')
 api.add_resource(Users, '/users')

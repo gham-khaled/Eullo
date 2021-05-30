@@ -10,7 +10,6 @@ import {
 import {WebSocketService} from "../../../core/services/web-socket.service";
 import {MessageComponent} from "./message/message.component";
 import {AuthService} from "../../../core/services/auth.service";
-import {ChatListService} from "../../../core/services/chat-list.service";
 import {Observable} from "rxjs";
 import {Message} from "../../../core/models/message.model";
 import {ChatItem, User} from "../../../core/models/user.model";

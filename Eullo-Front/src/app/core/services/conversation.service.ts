@@ -7,6 +7,7 @@ import {Message} from "../models/message.model";
 import {environment} from "../../../environments/environment";
 import {map} from "rxjs/operators";
 import {CryptoService} from "./crypto.service";
+import {logger} from "codelyzer/util/logger";
 
 @Injectable({
   providedIn: 'root'
@@ -23,11 +24,7 @@ export class ConversationService {
       this._partner.next(partner);
   }
 
-  private _conversation = new BehaviorSubject<Message[]>([
-    {message: "Message 1", status: "sent"},
-    {message: "Message 2", status: "sent"},
-    {message: "Message 3", status: "received"}
-  ]);
+  private _conversation = new BehaviorSubject<Message[]>([]);
   readonly conversation = this._conversation.asObservable();
   loadConversation(partner: string) {
     let params = new HttpParams().set('partner', partner);
@@ -36,6 +33,10 @@ export class ConversationService {
         map(data => {
           // @ts-ignore
           data = JSON.parse(data);
+          this.cryptoService.decrypt("test")
+          console.log(data)
+          // data.conversation.forEach((convo) => {
+          //   console.log(convo.encrypted_sender)}  )
           const messages = data.conversation.map(message => ({
             message: message.sender === this._currentUsername ? this.cryptoService.decrypt(message.encrypted_sender) : this.cryptoService.decrypt(message.encrypted_receiver),
             status: message.sender === this._currentUsername ? "sent" : "received"

@@ -1,33 +1,24 @@
-import {Injectable} from '@angular/core';
+import {Injectable, Injector} from '@angular/core';
 import {BehaviorSubject} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {AuthService} from "./auth.service";
 import {map} from "rxjs/operators";
 import {ChatItem} from "../models/user.model";
+import {CryptoService} from "./crypto.service";
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class ChatListService {
   private _currentUsername: string | undefined;
+
   constructor(private http: HttpClient, private authService: AuthService) {
     this._currentUsername = this.authService.credentials?.username;
   }
 
-  private _chatItems = new BehaviorSubject<ChatItem[]>([
-    {username: "douda", lastReceivedMessage: "Ouech", connected: true},
-    {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
-    {username: "sa", lastReceivedMessage: "Aa saa", connected: true},
-    {username: "douda", lastReceivedMessage: "Ouech", connected: true},
-    {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
-    {username: "sa", lastReceivedMessage: "Aa saa", connected: true},
-    {username: "douda", lastReceivedMessage: "Ouech", connected: true},
-    {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
-    {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
-  ]);
+  private _chatItems = new BehaviorSubject<ChatItem[]>([]);
   readonly chatItems = this._chatItems.asObservable();
+
   loadChatItems() {
     this.http.get(`${environment.BASE_URL}/messages/${this._currentUsername}`)
       .pipe(

@@ -5,9 +5,7 @@ import {environment} from "../../../environments/environment";
 
 
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class AuthService {
 
   private _credentials: User | null | undefined;
