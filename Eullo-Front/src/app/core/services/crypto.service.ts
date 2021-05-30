@@ -20,7 +20,6 @@ export class CryptoService {
     if (user) {
       this._certificate = pki.certificateFromPem(user.certificate);
       this._publicKey = this._certificate.publicKey;
-      this._privateKey = this._certificate.privateKey;
     }
   }
 
