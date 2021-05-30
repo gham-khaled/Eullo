@@ -1,4 +1,4 @@
-import {Injectable} from "@angular/core";
+import {Inject, Injectable, Injector} from "@angular/core";
 import * as forge from "node-forge";
 import {User} from "../models/user.model";
 import {AuthService} from "./auth.service";
@@ -7,16 +7,15 @@ const pki = forge.pki
 const rsa = pki.rsa;
 
 const KEY_SIZE = 2048;
-@Injectable({
-  providedIn: 'root'
-})
+
+@Injectable()
 export class CryptoService {
   private _privateKey;
   private _publicKey;
   private _certificate;
 
   constructor(private authService: AuthService) {
-    const user: User | null | undefined = this.authService.credentials;
+    const user: User | null | undefined = authService.credentials;
     if (user) {
       this._certificate = pki.certificateFromPem(user.certificate);
       this._publicKey = this._certificate.publicKey;
@@ -26,7 +25,7 @@ export class CryptoService {
 
   // @ts-ignore
   setPrivateKeyFromEncryptedKey(encryptedPrivateKeyPem: string, password: string) {
-    this._privateKey = pki.decryptRsaPrivateKey(encryptedPrivateKeyPem,password);
+    this._privateKey = pki.decryptRsaPrivateKey(encryptedPrivateKeyPem, password);
   }
 
   set certificate(certificatePem: string) {
@@ -62,7 +61,7 @@ export class CryptoService {
 
   generateEncryptedPrivateKey(password: string) {
     if (this._privateKey)
-      return  pki.encryptRsaPrivateKey(this._privateKey, password);
+      return pki.encryptRsaPrivateKey(this._privateKey, password);
     return null;
   }
 
@@ -74,6 +73,7 @@ export class CryptoService {
   }
 
   decrypt(encryptedMessage: string) {
+
     // @ts-ignore
     return this._privateKey.decrypt(forge.util.decode64(encryptedMessage));
   }
