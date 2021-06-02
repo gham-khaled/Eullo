@@ -10,8 +10,7 @@ const KEY_SIZE = 2048;
 
 @Injectable()
 export class CryptoService {
-  // @ts-ignore
-  private _privateKey;
+  private _privateKey: any;
   private _publicKey;
   private _certificate;
 

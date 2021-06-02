@@ -27,18 +27,7 @@ socketio = SocketIO(app, cors_allowed_origins='*')
 ldapFunctions = LdapFunctions()
 ca_functions = CAFunctions()
 
-conn = pymysql.connect(
-    host='eullo-cluster.cluster-c0zm1odhbvnh.eu-west-1.rds.amazonaws.com',
-    port=3306,
-    user='douda',
-    password='douda123',
-    db='eullo',
-    cursorclass=pymysql.cursors.DictCursor,
-    autocommit=True,
-    use_unicode=True,
-    charset='utf8'
 
-)
 
 
 class Messages(Resource):
@@ -61,6 +50,7 @@ class Messages(Resource):
 
 class Message(Resource):
     def get(self, username):
+
         cur = conn.cursor()
         partner = request.args.get('partner')
         query = """
@@ -153,4 +143,16 @@ if __name__ == '__main__':
     # socketio.run()
     #
     # app.run(  host="0.0.0.0", port=8080)
+    conn = pymysql.connect(
+        host='eullo-cluster.cluster-c0zm1odhbvnh.eu-west-1.rds.amazonaws.com',
+        port=3306,
+        user='douda',
+        password='douda123',
+        db='eullo',
+        cursorclass=pymysql.cursors.DictCursor,
+        autocommit=True,
+        use_unicode=True,
+        charset='utf8'
+
+    )
     socketio.run(app, host='0.0.0.0', port=8080)

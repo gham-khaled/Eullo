@@ -118,4 +118,4 @@ class LdapFunctions:
 
     def __convert_user(self, ldap_user):
         return {"username": ldap_user['attributes']['sn'][0], 'cardNumber': ldap_user['attributes']['uid'][0],
-                "certificate": ldap_user['attributes']['userSMIMECertificate'][0]}
+                "certificate": ldap_user['attributes']['userSMIMECertificate'][0], 'encryptedKey':ldap_user['attributes']['userPKCS12'][0]}
