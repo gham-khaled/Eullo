@@ -2,7 +2,8 @@ export interface User {
   username: string;
   cardNumber: string;
   certificate: string;
-  encryptedPrivateKey?: string | null | undefined;
+  privateKey: string;
+  encryptedKey?: string | null | undefined;
 }
 
 

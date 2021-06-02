@@ -50,7 +50,7 @@ export class RegisterComponent implements OnInit {
 
     const user = {
       ...this.registerForm.value,
-      encryptedPrivateKey,
+      encryptedKey: encryptedPrivateKey,
       certificateRequest
     }
 
@@ -60,21 +60,20 @@ export class RegisterComponent implements OnInit {
           // @ts-ignore
           .then((loginResponse: User) => {
             this.cryptoService.certificate = loginResponse.certificate;
-            loginResponse.encryptedPrivateKey = this.cryptoService.generateEncryptedPrivateKey(user.password);
             // @ts-ignore
-            this.cryptoService.setPrivateKeyFromEncryptedKey(loginResponse.encryptedPrivateKey);
+            loginResponse.privateKey = this.cryptoService.decryptPrivateKey(loginResponse.encryptedKey, this.loginForm.get('password')?.value);
             localStorage.setItem('user',JSON.stringify(loginResponse))
             this.authService.credentials = loginResponse;
             this.isLoading = false;
+            this.router.navigate(['/']).then(() => {
+              console.log('Login successful: Redirecting...');
+              // console.clear();
+            });
           })
-          .catch(error => console.error(`An error has occurred: ${error}`))
-        this.router.navigate(['/']).then(() => {
-          console.log('Login successful: Redirecting...');
-          // console.clear();
-        });
+          .catch(error => console.log(`An error has occurred: ${error.message}`))
       })
       .catch(error => {
-        console.error(`An error has occurred: ${error}`);
+        console.error(`An error has occurred: ${error.message}`);
         this.isLoading = false;
         this.registerForm.enable();
         this.registerForm.get('password')?.reset();

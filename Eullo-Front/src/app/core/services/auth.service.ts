@@ -48,7 +48,7 @@ export class AuthService {
   logout() {
     const user: User | null | undefined = this.credentials;
     this._credentials = null;
-    const encryptedPrivateKey = user?.encryptedPrivateKey;
+    const encryptedPrivateKey = user?.encryptedKey;
     localStorage.removeItem('user');
     // @ts-ignore
     localStorage.setItem(`${user?.username}-encryptedPrivateKey`, encryptedPrivateKey);

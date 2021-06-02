@@ -33,10 +33,6 @@ export class ConversationService {
         map(data => {
           // @ts-ignore
           data = JSON.parse(data);
-          this.cryptoService.decrypt("test")
-          console.log(data)
-          // data.conversation.forEach((convo) => {
-          //   console.log(convo.encrypted_sender)}  )
           const messages = data.conversation.map(message => ({
             message: message.sender === this._currentUsername ? this.cryptoService.decrypt(message.encrypted_sender) : this.cryptoService.decrypt(message.encrypted_receiver),
             status: message.sender === this._currentUsername ? "sent" : "received"
@@ -46,6 +42,7 @@ export class ConversationService {
       )
       .subscribe(data => {
         localStorage.setItem('partner', data.certificate)
+        // @ts-ignore
         this._conversation.next(data.conversation);
       }, error => console.error(`Couldn't log conversation with partner: ${partner} ${error.message}`))
   }

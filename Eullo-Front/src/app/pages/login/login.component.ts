@@ -36,14 +36,12 @@ export class LoginComponent implements OnInit {
   async login() {
     this.isLoading = true;
     this.loginForm.disable();
-    const encryptedPrivateKey = localStorage.getItem(`${this.loginForm.get('username')?.value}-encryptedPrivateKey`);
     await this.authService.login(this.loginForm.get('username')?.value, this.loginForm.get('password')?.value)
       // @ts-ignore
       .then((data: User) => {
         this.cryptoService.certificate = data.certificate;
-        data.encryptedPrivateKey = encryptedPrivateKey;
         // @ts-ignore
-        this.cryptoService.setPrivateKeyFromEncryptedKey(encryptedPrivateKey, this.loginForm.get('password')?.value);
+        data.privateKey = this.cryptoService.decryptPrivateKey(data.encryptedKey, this.loginForm.get('password')?.value);
         localStorage.setItem('user', JSON.stringify(data));
         this.authService.credentials = data;
         this.router.navigate(['/']).then(() => {

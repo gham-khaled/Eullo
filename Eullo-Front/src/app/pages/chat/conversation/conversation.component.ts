@@ -80,9 +80,9 @@ export class ConversationComponent implements OnInit {
       if (partner_certificate) {
         receiver_encrypted = this.cryptoService.encrypt(this.message, partner_certificate);
       }
-      if (user)
+      if (user) {
         sender_encrypted = this.cryptoService.encrypt(this.message, user?.certificate);
-
+      }
       if (!!receiver_encrypted && !!sender_encrypted) {
         this.webSocketService.emit('message', JSON.stringify({
           'receiver_encrypted': receiver_encrypted,

@@ -10,6 +10,7 @@ const KEY_SIZE = 2048;
 
 @Injectable()
 export class CryptoService {
+  // @ts-ignore
   private _privateKey;
   private _publicKey;
   private _certificate;
@@ -19,12 +20,13 @@ export class CryptoService {
     if (user) {
       this._certificate = pki.certificateFromPem(user.certificate);
       this._publicKey = this._certificate.publicKey;
+      this._privateKey = pki.privateKeyFromPem(user.privateKey);
     }
   }
 
   // @ts-ignore
-  setPrivateKeyFromEncryptedKey(encryptedPrivateKeyPem: string, password: string) {
-    this._privateKey = pki.decryptRsaPrivateKey(encryptedPrivateKeyPem, password);
+  decryptPrivateKey(encryptedPrivateKeyPem: string, password: string) {
+    return  pki.privateKeyToPem(pki.decryptRsaPrivateKey(encryptedPrivateKeyPem, password));
   }
 
   set certificate(certificatePem: string) {
@@ -64,17 +66,16 @@ export class CryptoService {
     return null;
   }
 
-  encrypt(message: string, partnerCertificate: string) {
-    const certificate = pki.certificateFromPem(partnerCertificate);
+  encrypt(message: string, senderCertificate: string) {
+    const certificate = pki.certificateFromPem(senderCertificate);
     const publicKey = certificate.publicKey;
     // @ts-ignore
     return forge.util.encode64(publicKey.encrypt(message));
   }
 
   decrypt(encryptedMessage: string) {
-
     // @ts-ignore
-    return this._privateKey.decrypt(forge.util.decode64(encryptedMessage));
+    return this._privateKey?.decrypt(forge.util.decode64(encryptedMessage));
   }
 
 }

@@ -12,7 +12,7 @@ import {CryptoService} from "./crypto.service";
 export class ChatListService {
   private _currentUsername: string | undefined;
 
-  constructor(private http: HttpClient, private authService: AuthService) {
+  constructor(private http: HttpClient, private authService: AuthService, private cryptoService: CryptoService) {
     this._currentUsername = this.authService.credentials?.username;
   }
 
@@ -26,7 +26,7 @@ export class ChatListService {
           // @ts-ignore
           items = items.map(item => ({
             username: item.receiver === this._currentUsername ? item.sender : item.receiver,
-            lastReceivedMessage: item.receiver === this._currentUsername ? item.encrypted_receiver : item.encrypted_sender,
+            lastReceivedMessage: item.receiver === this._currentUsername ? this.cryptoService.decrypt(item.encrypted_receiver) : this.cryptoService.decrypt(item.encrypted_sender),
             connected: item.connected
           }));
           return items;
