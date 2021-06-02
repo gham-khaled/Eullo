@@ -95,7 +95,8 @@ export class ConversationComponent implements OnInit {
         const componentRef = this.newMessageComponent();
         componentRef.instance.message = this.message;
         componentRef.instance.status = "sent";
-        this.chatListService.updateChatList(this.partner?.username, this.message )
+        this.chatListService.updateChatList(this.partner?.username, this.message)
+        this.message = ""
       }
     }
   }
