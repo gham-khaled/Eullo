@@ -5,6 +5,8 @@ import {ChatListService} from "../../core/services/chat-list.service";
 import * as forge from "node-forge";
 import {AuthService} from "../../core/services/auth.service";
 import {ChatItem} from "../../core/models/user.model";
+import {CryptoService} from "../../core/services/crypto.service";
+import {ConversationService} from "../../core/services/conversation.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -21,48 +23,27 @@ export class ChatComponent implements OnInit {
   selectedUser: ChatItem | undefined;
 
 
-  constructor(private webSocketService: WebSocketService, private chatService: ChatListService, private authService : AuthService) {
+  constructor(private webSocketService: WebSocketService,
+              private cryptoService: CryptoService,
+              private conversationService: ConversationService,
+              private chatService: ChatListService,
+              private authService : AuthService) {
   }
 
   ngOnInit(): void {
-    this.users = [
-      {username: "douda", lastReceivedMessage: "Ouech", connected: true},
-      {username: "sinda", lastReceivedMessage: "Salut!!", connected: false},
-      {username: "sa", lastReceivedMessage: "Aa saa", connected: true}
-    ]
-    // this.chatService.partner.subscribe(data => this.selectedUser = data)
-    //
-    // const private_key_pem = localStorage.getItem('priv_key')
-    // // @ts-ignore
-    // const private_key = pki.privateKeyFromPem(private_key_pem)
-    //
-    // // @ts-ignore
-    // this.webSocketService.listen('message').subscribe((message: any) => {
-    //   console.log(message);
-    //   console.log(typeof (message));
-    //   // message = JSON.parse(message)
-    //   // @ts-ignore
-    //   let body = message.sender === this.authService.credentials?.username ? message.sender_encrypted : message.receiver_encrypted
-    //   body = private_key.decrypt(body)
-    //   console.log('Decrypted Message ', body)
-    //   if (this.selectedUser?.username == message.sender)
-    //     this.activeConversation?.receiveMessage(body);
-    //   this.updateChatList(message.sender, body)
-    // })
+    this.users = []
+    this.conversationService.partner.subscribe(data => this.selectedUser = data)
+    this.webSocketService.listen('message').subscribe((message: any) => {
+      let body = message.sender === this.authService.credentials?.username ? message.sender_encrypted : message.receiver_encrypted
+      body = this.cryptoService.decrypt(body)
+      console.log(this.selectedUser?.username)
+      if (this.selectedUser?.username == message.sender)
+        this.activeConversation?.receiveMessage(body);
+      this.chatService.updateChatList(message.sender, body)
+    })
   }
 
-  updateChatList(username: string | undefined, body: string) {
-    // @ts-ignore
-    const index = this.users.findIndex(user => user.username === username);
-    console.log(index)
-    if (index == -1) { // @ts-ignore
-      this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
-    } else {
-      this.users?.splice(index, 1)
-      // @ts-ignore
-      this.users?.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
-    }
-  }
+
 
 }
 

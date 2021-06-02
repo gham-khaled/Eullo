@@ -38,4 +38,18 @@ export class ChatListService {
         }, error => console.error(`Couldn't load users: ${error.message}`)
       );
   }
+
+  updateChatList(username: string | undefined, body: string) {
+    let newChatItems = this._chatItems.getValue()
+    const index = newChatItems.findIndex(user => user.username === username);
+    console.log(index)
+    if (index == -1) { // @ts-ignore
+      newChatItems.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
+    } else {
+      newChatItems.splice(index, 1)
+      // @ts-ignore
+      newChatItems.splice(0, 0, {username: username, lastReceivedMessage: body, connected: true})
+    }
+    this._chatItems.next(newChatItems)
+  }
 }

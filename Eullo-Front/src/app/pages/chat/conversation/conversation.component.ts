@@ -16,6 +16,7 @@ import {ChatItem, User} from "../../../core/models/user.model";
 import * as forge from "node-forge";
 import {ConversationService} from "../../../core/services/conversation.service";
 import {CryptoService} from "../../../core/services/crypto.service";
+import {ChatListService} from "../../../core/services/chat-list.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
@@ -45,6 +46,7 @@ export class ConversationComponent implements OnInit {
               private webSocketService: WebSocketService,
               private authService: AuthService,
               private cryptoService: CryptoService,
+              private chatListService: ChatListService,
               private conversationService: ConversationService) {
   }
 
@@ -93,8 +95,7 @@ export class ConversationComponent implements OnInit {
         const componentRef = this.newMessageComponent();
         componentRef.instance.message = this.message;
         componentRef.instance.status = "sent";
-        this.newMessage.next(this.message);
-        this.message = "";
+        this.chatListService.updateChatList(this.partner?.username, this.message )
       }
     }
   }
