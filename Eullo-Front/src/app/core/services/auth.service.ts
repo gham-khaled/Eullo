@@ -53,6 +53,5 @@ export class AuthService {
     localStorage.removeItem('user');
     // @ts-ignore
     localStorage.setItem(`${user?.username}-encryptedPrivateKey`, encryptedPrivateKey);
-
   }
 }

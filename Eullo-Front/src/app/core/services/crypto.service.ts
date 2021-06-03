@@ -15,9 +15,11 @@ export class CryptoService {
   private _publicKey;
   private _certificate;
 
-  constructor(private authService: AuthService) {
-    const user: User | null | undefined = authService.credentials;
-    if (user) {
+  constructor() {
+    // @ts-ignore
+    const savedCredentials = localStorage.getItem('user');
+    if (savedCredentials) {
+      const user: User = JSON.parse(savedCredentials);
       this._certificate = pki.certificateFromPem(user.certificate);
       this._publicKey = this._certificate.publicKey;
       this._privateKey = pki.privateKeyFromPem(user.privateKey);
