@@ -57,7 +57,7 @@ export class RegisterComponent implements OnInit {
 
     await this.authService.register(user)
       .then(async data => {
-        await this.authService.login(user.username, user.password)
+        await this.authService.login(user.username, this.registerForm.get('password')?.value)
           // @ts-ignore
           .then((loginResponse: User) => {
             this.cryptoService.certificate = loginResponse.certificate;
