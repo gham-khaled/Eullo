@@ -1,10 +1,13 @@
-<mat-toolbar class="nav-bar" color="primary">
-  <mat-toolbar-row>
-    <span>Eullo.</span>
-    <span class="example-spacer"></span>
-    <button mat-button [matMenuTriggerFor]="menu"><span class="material-icons">person_outline</span>{{username}}</button>
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="logout()"><span class="material-icons">logout</span>Logout</button>
-    </mat-menu>
-  </mat-toolbar-row>
-</mat-toolbar>
+<div class="container-fluid nav-bar">
+  <div class="row">
+    <div class="col">
+      <span class="title">Eullo.</span>
+    </div>
+    <div class="col-auto">
+      <button mat-button [matMenuTriggerFor]="menu"><span class="material-icons">person_outline</span>{{username}}</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="logout()"><span class="material-icons">logout</span>Logout</button>
+      </mat-menu>
+    </div>
+  </div>
+</div>

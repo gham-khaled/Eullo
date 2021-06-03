@@ -12,7 +12,18 @@
 }
 
 .nav-bar{
-  position: fixed;
-  z-index: 2;
-  height: 5%;
+  height: 10vh;
+  background: #00307c;
+}
+
+.nav-bar > .row {
+  height: 100%;
+  align-items: center;
+  color: #edf2f4;
+}
+
+.nav-bar .title {
+  font: 500 20px/32px Roboto, "Helvetica Neue", sans-serif;
+  letter-spacing: normal;
+  color: white;
 }

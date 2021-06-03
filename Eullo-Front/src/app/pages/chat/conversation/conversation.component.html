@@ -23,17 +23,22 @@
       </mat-card-header>
     </mat-card>
   </div>
-  <div class="messages-container">
+  <div #messageContainer class="messages-container">
     <app-message *ngFor="let message of conversation |async" [message]="message.message" [status]="message.status"></app-message>
     <app-message *ngFor="let message of messages" [message]="message.message" [status]="message.status"></app-message>
-    <ng-container #messagesContainer></ng-container>
   </div>
-  <div class="send-message">
-    <mat-form-field class="send-message-input">
-      <input type="text" [(ngModel)]="message" matInput placeholder="Type a message ...">
-      <button matSuffix mat-button (click)="sendMessage()" type='button'>
-        <mat-icon color="primary">send</mat-icon>
-      </button>
-    </mat-form-field>
-  </div>
+  <mat-card>
+    <mat-card-footer>
+      <div class="send-message">
+        <form (ngSubmit)="sendMessage()">
+          <mat-form-field class="send-message-input">
+            <input type="text" [(ngModel)]="message" [ngModelOptions]="{standalone: true}" matInput placeholder="Type a message ...">
+            <button matSuffix mat-button type="submit">
+              <mat-icon color="primary">send</mat-icon>
+            </button>
+          </mat-form-field>
+        </form>
+      </div>
+    </mat-card-footer>
+  </mat-card>
 </div>

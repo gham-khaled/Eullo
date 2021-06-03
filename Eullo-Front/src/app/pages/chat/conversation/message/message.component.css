@@ -1,4 +1,4 @@
-.card{
+.message-wrapper{
   margin-top: 1%;
   display: flex;
   flex-direction: column;
@@ -17,5 +17,4 @@
   background: #f3c9b3;
   margin-left: 1%;
   border-radius: 30px;
-
 }

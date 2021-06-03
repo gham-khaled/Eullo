@@ -40,8 +40,7 @@ export class ConversationComponent implements OnInit {
   messages: Message[] = [];
   partner: ChatItem | undefined = {connected: false, lastReceivedMessage: "", username: ""};
 
-  @ViewChild('messagesContainer', {read: ViewContainerRef})
-  entry: ViewContainerRef | undefined;
+  @ViewChild('messageContainer', {read: ViewContainerRef}) messageContainer: ViewContainerRef | undefined;
 
   constructor(private resolver: ComponentFactoryResolver,
               private webSocketService: WebSocketService,
@@ -57,22 +56,18 @@ export class ConversationComponent implements OnInit {
       partner => {
         this.partner = partner;
         if (!!partner.username)
-          this.conversationService.loadConversation(partner.username);
+          this.conversationService.loadConversation(partner.username).then(() => {});
       }
     )
     this.allUsers = this.conversationService.allUsers;
     this.conversationService.loadAllUsers();
+    this.conversationService.partner.subscribe(() => {
+      this.messages = [];
+    });
   }
 
   setPartner(partner: ChatItem) {
     this.conversationService.setPartner(partner);
-    this.messages = [];
-  }
-
-  newMessageComponent() {
-    const factory = this.resolver.resolveComponentFactory(MessageComponent);
-    // @ts-ignore
-    return this.entry.createComponent(factory);
   }
 
   sendMessage() {

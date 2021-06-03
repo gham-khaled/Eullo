@@ -7,7 +7,6 @@ import {Message} from "../models/message.model";
 import {environment} from "../../../environments/environment";
 import {map} from "rxjs/operators";
 import {CryptoService} from "./crypto.service";
-import {logger} from "codelyzer/util/logger";
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +27,7 @@ export class ConversationService {
   readonly conversation = this._conversation.asObservable();
   loadConversation(partner: string) {
     let params = new HttpParams().set('partner', partner);
-    this.http.get<{conversation: [any], certificate: string}>(`${environment.BASE_URL}/message/${this._currentUsername}`, {params: params})
+    return this.http.get<{conversation: any[], certificate: string}>(`${environment.BASE_URL}/message/${this._currentUsername}`, {params: params})
       .pipe(
         map(data => {
           // @ts-ignore
@@ -40,11 +39,11 @@ export class ConversationService {
           return {'conversation': messages, 'certificate': data.certificate}
         })
       )
-      .subscribe(data => {
+      .toPromise().then(data => {
         localStorage.setItem('partner', data.certificate)
         // @ts-ignore
         this._conversation.next(data.conversation);
-      }, error => console.error(`Couldn't log conversation with partner: ${partner} ${error.message}`))
+      }).catch(error => console.error(`Couldn't log conversation with partner: ${partner} ${error.message}`));
   }
 
   private _allUsers = new BehaviorSubject<ChatItem[]>([]);

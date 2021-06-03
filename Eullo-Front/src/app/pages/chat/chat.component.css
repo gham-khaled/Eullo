@@ -1,4 +1,12 @@
 .chat{
   background: #00307c;
+}
 
+.content-wrapper {
+  height: 90vh;
+  max-height: 90vh;
+}
+
+.content-wrapper > .row {
+  height: 100%;
 }
