@@ -5,6 +5,7 @@ import {AuthService} from "./auth.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
+const md = forge.md.sha512.create();
 
 const KEY_SIZE = 2048;
 
@@ -75,6 +76,11 @@ export class CryptoService {
   decrypt(encryptedMessage: string) {
     // @ts-ignore
     return this._privateKey?.decrypt(forge.util.decode64(encryptedMessage));
+  }
+
+  hash(message: string) {
+    md.update(message);
+    return md.digest().toHex();
   }
 
 }
