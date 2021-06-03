@@ -47,20 +47,19 @@ export class RegisterComponent implements OnInit {
 
     this.isLoading = true;
     this.registerForm.disable();
-
+    const hashedPassword = this.cryptoService.hash(this.registerForm.get('password')?.value);
     const user = {
       ...this.registerForm.value,
+      password: hashedPassword,
       encryptedKey: encryptedPrivateKey,
       certificateRequest
     }
 
     await this.authService.register(user)
       .then(async data => {
-        console.log(data)
         await this.authService.login(user.username, user.password)
           // @ts-ignore
           .then((loginResponse: User) => {
-            console.log(loginResponse)
             this.cryptoService.certificate = loginResponse.certificate;
             // @ts-ignore
             loginResponse.privateKey = this.cryptoService.decryptPrivateKey(loginResponse.encryptedKey, this.registerForm.get('password')?.value);

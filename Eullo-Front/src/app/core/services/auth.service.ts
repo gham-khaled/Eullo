@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {RegisterRequest, User} from "../models/user.model";
 import {environment} from "../../../environments/environment";
+import {CryptoService} from "./crypto.service";
 
 
 
@@ -10,7 +11,7 @@ export class AuthService {
 
   private _credentials: User | null | undefined;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cryptoService: CryptoService) {
     const savedCredentials = localStorage.getItem('user');
     if (savedCredentials) {
       this._credentials = JSON.parse(savedCredentials);
@@ -35,7 +36,7 @@ export class AuthService {
 
   async login(username: string, password: string) {
     let params = new HttpParams().set('username', username);
-    params = params.append('password', password);
+    params = params.append('password', this.cryptoService.hash(password));
     return this.http
       .get(`${environment.BASE_URL}/auth`, {params: params})
       .toPromise();
