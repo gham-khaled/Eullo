@@ -50,7 +50,6 @@ class LdapFunctions:
     def get_user(self, username=None):
         if username == None:
             return {}
-        print(username)
         self.connect()
         # attributes=['cn', 'sn']
         self.conn.search(self.dn, f'(&(objectclass=inetOrgPerson)(sn={username})(!(uid=0001)))',
@@ -77,7 +76,6 @@ class LdapFunctions:
             return {'message': "Invalid Credentials"}, 400
         else:
             user = json.loads(self.conn.entries[0].entry_to_json())
-            print(user)
             # if ('userSMIMECertificate' in user['attributes']):
             #     L = ast.literal_eval(user['attributes']['userSMIMECertificate'][0])
             #     user['attributes']['userCertificate'] = str(np.array(L, dtype='int8').tobytes())
@@ -104,7 +102,7 @@ class LdapFunctions:
                     "uid": user['cardNumber'],
                     # "displayName": user['displayName'],
                     "userPassword": hashed_pass,
-                    "userPKCS12": user['encryptedPrivateKey'],
+                    "userPKCS12": user['encryptedKey'],
                     # "userCertificate": (user['certificate']).encode('ascii'),
                     "userSMIMECertificate": user['certificate']
                 },

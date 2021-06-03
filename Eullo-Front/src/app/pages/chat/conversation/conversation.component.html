@@ -25,6 +25,7 @@
   </div>
   <div class="messages-container">
     <app-message *ngFor="let message of conversation |async" [message]="message.message" [status]="message.status"></app-message>
+    <app-message *ngFor="let message of messages" [message]="message.message" [status]="message.status"></app-message>
     <ng-container #messagesContainer></ng-container>
   </div>
   <div class="send-message">

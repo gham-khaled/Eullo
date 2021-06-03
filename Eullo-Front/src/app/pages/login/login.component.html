@@ -26,7 +26,7 @@
           </mat-form-field>
         </div>
         <div >
-          <button mat-flat-button color="primary" class="button" [disabled]="loginForm.invalid || isLoading" (click)="login()">Login</button>
+          <button mat-flat-button color="primary" type="button" class="button" [disabled]="loginForm.invalid || isLoading" (click)="login()">Login</button>
         </div>
         <div class="sign-up">Don't Have an Account? <a routerLink="/register">Register</a></div>
       </form>

@@ -37,6 +37,7 @@ export class ConversationComponent implements OnInit {
   newMessage = new EventEmitter<string>();
 
   conversation: Observable<Message[]> | undefined;
+  messages: Message[] = [];
   partner: ChatItem | undefined = {connected: false, lastReceivedMessage: "", username: ""};
 
   @ViewChild('messagesContainer', {read: ViewContainerRef})
@@ -65,6 +66,7 @@ export class ConversationComponent implements OnInit {
 
   setPartner(partner: ChatItem) {
     this.conversationService.setPartner(partner);
+    this.messages = [];
   }
 
   newMessageComponent() {
@@ -91,10 +93,15 @@ export class ConversationComponent implements OnInit {
           'sender_encrypted': sender_encrypted,
           'receiver': this.partner?.username,
           'sender': this.authService.credentials?.username
-        }))
-        const componentRef = this.newMessageComponent();
-        componentRef.instance.message = this.message;
-        componentRef.instance.status = "sent";
+        }));
+        const message = {
+          message: this.message,
+          status: "sent"
+        };
+        this.messages.push(message);
+        // const componentRef = this.newMessageComponent();
+        // componentRef.instance.message = this.message;
+        // componentRef.instance.status = "sent";
         this.chatListService.updateChatList(this.partner?.username, this.message)
         this.message = ""
       }
@@ -103,9 +110,14 @@ export class ConversationComponent implements OnInit {
 
   receiveMessage(message: string) {
     console.log('Received A new Message')
-    const componentRef = this.newMessageComponent();
-    componentRef.instance.message = message;
-    componentRef.instance.status = "received";
+    const messageObj = {
+      message,
+      status: "received"
+    };
+    this.messages.push(messageObj);
+    // const componentRef = this.newMessageComponent();
+    // componentRef.instance.message = message;
+    // componentRef.instance.status = "received";
     // this.message = "";
   }
 }

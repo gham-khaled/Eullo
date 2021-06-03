@@ -56,6 +56,7 @@ export class RegisterComponent implements OnInit {
 
     await this.authService.register(user)
       .then(async data => {
+        console.log(data)
         await this.authService.login(user.username, user.password)
           // @ts-ignore
           .then((loginResponse: User) => {

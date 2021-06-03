@@ -44,7 +44,7 @@
         </mat-form-field>
       </div>
       <div >
-        <button mat-flat-button color="primary" class="button" [disabled]="registerForm.invalid || isLoading" (click)="register()">Register</button>
+        <button mat-flat-button color="primary" class="button" type="button" [disabled]="registerForm.invalid || isLoading" (click)="register()">Register</button>
       </div>
       <div class="sign-up">Already Have an Account? <a routerLink="/login">Login</a></div>
     </form>

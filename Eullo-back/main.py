@@ -28,18 +28,17 @@ ldapFunctions = LdapFunctions()
 ca_functions = CAFunctions()
 
 
-
-
 class Messages(Resource):
     def get(self, username):
         cur = conn.cursor()
         query = """
-        SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation
-        WHERE (user1 = %s OR user2 = %s) GROUP BY  least(user1, user2), greatest(user1, user2)
+        SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver, date as date FROM conversation
+        WHERE (user1 = %s OR user2 = %s) GROUP BY  least(user1, user2), greatest(user1, user2) ORDER BY date
                   """
         cur.execute(query, (username, username))
         conversations = cur.fetchall()
         for conversation in conversations:
+            conversation['date'] = str(conversation['date'])
             partner = conversation['sender'] if conversation['sender'] != username else conversation['receiver']
             if partner in connected_users:
                 conversation['connected'] = True
@@ -50,17 +49,19 @@ class Messages(Resource):
 
 class Message(Resource):
     def get(self, username):
-
         cur = conn.cursor()
         partner = request.args.get('partner')
         query = """
-        SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver FROM conversation
-        WHERE (user1 = %s AND user2 = %s) OR (user1 = %s AND user2 = %s)
+        SELECT user1 as sender, user2 as receiver, msg1 as encrypted_sender, msg2 as encrypted_receiver, date as date 
+        FROM conversation WHERE (user1 = %s AND user2 = %s) OR (user1 = %s AND user2 = %s) ORDER BY date
         """
         cur.execute(query, (username, partner, partner, username))
-        conversation = cur.fetchall()
+        conversations = cur.fetchall()
+        for conversation in conversations:
+            conversation['date'] = str(conversation['date'])
+
         partner_infos = ldapFunctions.get_user(partner)
-        return json.dumps({"conversation": conversation, "certificate": partner_infos['certificate']})
+        return json.dumps({"conversation": conversations, "certificate": partner_infos['certificate']})
 
 
 class User(Resource):
@@ -104,6 +105,7 @@ def send_message(msg):
     message = json.loads(msg)
     receiver = message['receiver']
     sender = message['sender']
+    print(f' Message from {sender} to {receiver}')
     sender_encrypted = (message['sender_encrypted'])
     receiver_encrypted = (message['receiver_encrypted'])
     cur = conn.cursor()
@@ -121,6 +123,7 @@ def send_message(msg):
 def add_connection():
     current_socket_id = request.sid
     username = request.args.get('username')
+    print(f'Username {username} is connected')
     certificate = request.args.get('certificate')
     connected_users[username] = current_socket_id
 
@@ -128,7 +131,10 @@ def add_connection():
 @socketio.on('disconnect')
 def remove_connection():
     username = request.args.get('username')
-    del connected_users[username]
+    print(f'Username {username} is disconnected')
+
+    if username in connected_users:
+        del connected_users[username]
 
 
 connected_users = {}
