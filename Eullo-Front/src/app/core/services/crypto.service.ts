@@ -1,11 +1,9 @@
 import {Inject, Injectable, Injector} from "@angular/core";
 import * as forge from "node-forge";
 import {User} from "../models/user.model";
-import {AuthService} from "./auth.service";
 
 const pki = forge.pki
 const rsa = pki.rsa;
-const md = forge.md.sha512.create();
 
 const KEY_SIZE = 2048;
 
@@ -81,6 +79,7 @@ export class CryptoService {
   }
 
   hash(message: string) {
+    const md = forge.md.sha512.create();
     md.update(message);
     return md.digest().toHex();
   }

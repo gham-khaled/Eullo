@@ -57,21 +57,25 @@ export class RegisterComponent implements OnInit {
 
     await this.authService.register(user)
       .then(async data => {
-        await this.authService.login(user.username, this.registerForm.get('password')?.value)
-          // @ts-ignore
-          .then((loginResponse: User) => {
-            this.cryptoService.certificate = loginResponse.certificate;
-            // @ts-ignore
-            loginResponse.privateKey = this.cryptoService.decryptPrivateKey(loginResponse.encryptedKey, this.registerForm.get('password')?.value);
-            localStorage.setItem('user',JSON.stringify(loginResponse))
-            this.authService.credentials = loginResponse;
-            this.isLoading = false;
-            this.router.navigate(['/']).then(() => {
-              console.log('Login successful: Redirecting...');
-              // console.clear();
-            });
-          })
-          .catch(error => console.log(`An error has occurred: ${error.message}`))
+        this.router.navigate(['/login']).then(() => {
+          console.log('Register successful: Redirecting...');
+        });
+        // console.log(user.password)
+        // await this.authService.login(user.username, this.registerForm.get('password')?.value)
+        //   // @ts-ignore
+        //   .then((loginResponse: User) => {
+        //     this.cryptoService.certificate = loginResponse.certificate;
+        //     // @ts-ignore
+        //     loginResponse.privateKey = this.cryptoService.decryptPrivateKey(loginResponse.encryptedKey, this.registerForm.get('password')?.value);
+        //     localStorage.setItem('user',JSON.stringify(loginResponse))
+        //     this.authService.credentials = loginResponse;
+        //     this.isLoading = false;
+        //     this.router.navigate(['/']).then(() => {
+        //       console.log('Login successful: Redirecting...');
+        //       // console.clear();
+        //     });
+        //   })
+        //   .catch(error => console.log(`An error has occurred: ${error.message}`))
       })
       .catch(error => {
         console.error(`An error has occurred: ${error.message}`);
