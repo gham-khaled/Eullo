@@ -40,7 +40,8 @@ export class ConversationComponent implements OnInit {
   messages: Message[] = [];
   partner: ChatItem | undefined = {connected: false, lastReceivedMessage: "", username: ""};
 
-  @ViewChild('messageContainer', {read: ViewContainerRef}) messageContainer: ViewContainerRef | undefined;
+  @ViewChild('messageContainer', {read: ViewContainerRef})
+  messageContainer!: ViewContainerRef;
 
   constructor(private resolver: ComponentFactoryResolver,
               private webSocketService: WebSocketService,
@@ -56,7 +57,9 @@ export class ConversationComponent implements OnInit {
       partner => {
         this.partner = partner;
         if (!!partner.username)
-          this.conversationService.loadConversation(partner.username).then(() => {});
+          this.conversationService.loadConversation(partner.username).then(() => {
+            this.messageContainer.element.nativeElement.scrollTop = 10000;
+          });
       }
     )
     this.allUsers = this.conversationService.allUsers;
